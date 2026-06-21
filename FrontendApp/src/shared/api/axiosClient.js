@@ -16,9 +16,11 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   async (config) => {
     try {
-      const token = await AsyncStorage.getItem('authToken');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+      if (AsyncStorage && typeof AsyncStorage.getItem === 'function') {
+        const token = await AsyncStorage.getItem('authToken');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
       }
       // Ensure Content-Type is set for POST/PUT/PATCH requests
       if (config.method && ['post', 'put', 'patch'].includes(config.method.toLowerCase())) {
@@ -65,6 +67,13 @@ export const restaurantService = {
   getAll: () => axiosClient.get(`${API_CONFIG.RESTAURANT_URL}`),
   getById: (id) => axiosClient.get(`${API_CONFIG.RESTAURANT_URL}/${id}`),
   search: (query) => axiosClient.get(`${API_CONFIG.RESTAURANT_URL}/search`, { params: { q: query } }),
+};
+
+export const menuService = {
+  getAll: () => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/menus`),
+  getById: (id) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/menus/${id}`),
+  getAllItems: () => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/menus/items/all`),
+  getItemById: (id) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/menus/items/${id}`),
 };
 
 export const orderService = {
