@@ -8,6 +8,7 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS, SPACING, FONT_SIZE, SHADOWS } from '../../../shared/constants/theme';
 import { restaurantService } from '../../../shared/api/axiosClient';
 
@@ -16,15 +17,35 @@ const ClientDashboardScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [categories, setCategories] = useState([]);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     fetchRestaurants();
-  }, []);
+    loadUser();
+    
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadUser();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     const uniqueCats = [...new Set(restaurants.map((r) => r.category))].filter(Boolean);
     setCategories(uniqueCats);
   }, [restaurants]);
+
+  const loadUser = async () => {
+    try {
+      const userDataJson = await AsyncStorage.getItem('userData');
+      if (userDataJson) {
+        setUser(JSON.parse(userDataJson));
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Error loading user in ClientDashboard:', error);
+    }
+  };
 
   const fetchRestaurants = async () => {
     try {
@@ -46,10 +67,26 @@ const ClientDashboardScreen = ({ navigation }) => {
   const featuredRestaurants = restaurants.slice(0, 4);
 
   const quickActions = [
-    { id: 1, label: 'Explora', action: 'Ver menú', icon: '🍽️', onPress: () => {} },
-    { id: 2, label: 'Eventos', action: 'Ver ofertas', icon: '🎉', onPress: () => {} },
-    { id: 3, label: 'Beneficios', action: 'Mi historial', icon: '💎', onPress: () => {} },
+    { id: 1, label: 'Explora', action: 'Ver menú', icon: '🍽️', onPress: () => {
+      // Just scroll to bottom restaurant section or notify
+      Alert.alert('Explorar', 'Selecciona una sede de la lista abajo para ver su menú gourmet.');
+    } },
+    { id: 2, label: 'Eventos', action: 'Ver ofertas', icon: '🎉', onPress: () => navigation.navigate('Events') },
+    { id: 3, label: 'Beneficios', action: 'Mi historial', icon: '💎', onPress: () => navigation.navigate('ClientHistory') },
   ];
+
+  // Helper for VIP Level calculation
+  const getVipLevelInfo = (pts = 0) => {
+    if (pts >= 300) {
+      return { level: 'Miembro Platino 👑', color: '#ec4899', progress: 100, next: 'Máximo nivel' };
+    } else if (pts >= 150) {
+      return { level: 'Miembro Oro 🌟', color: COLORS.primaryDark, progress: ((pts - 150) / 150) * 100, next: `${300 - pts} pts para Platino` };
+    } else {
+      return { level: 'Miembro Gourmet 💎', color: COLORS.secondary, progress: (pts / 150) * 100, next: `${150 - pts} pts para Oro` };
+    }
+  };
+
+  const vipInfo = getVipLevelInfo(user?.points || 0);
 
   const renderQuickAction = (action) => (
     <TouchableOpacity
@@ -92,8 +129,8 @@ const ClientDashboardScreen = ({ navigation }) => {
       key={restaurant.id || index}
       style={styles.restaurantCard}
       onPress={() => {
-        if (restaurant.id) {
-          navigation.navigate('RestaurantMenu', { id: restaurant.id });
+        if (restaurant.id || restaurant._id) {
+          navigation.navigate('RestaurantMenu', { id: restaurant.id || restaurant._id });
         } else {
           console.warn('Restaurant ID is undefined, cannot navigate');
         }
@@ -151,23 +188,29 @@ const ClientDashboardScreen = ({ navigation }) => {
           <Text style={styles.headerTitle}>
             Tu pase <Text style={styles.headerTitleAccent}>VIP</Text> al sabor
           </Text>
-          <Text style={styles.headerSubtitle}>
-            Gestiona tus puntos, explora las mejores sedes y reserva con un solo toque.
-          </Text>
+          {user && (
+            <Text style={styles.welcomeText}>¡Hola, {user.name || user.username}! 👋</Text>
+          )}
         </View>
 
         {/* VIP Points Card */}
         <View style={styles.vipCard}>
           <Text style={styles.vipLabel}>Nivel Comensal</Text>
-          <Text style={styles.vipLevel}>Miembro Gourmet</Text>
+          <Text style={[styles.vipLevel, { color: vipInfo.color }]}>{vipInfo.level}</Text>
+          
           <View style={styles.pointsContainer}>
-            <Text style={styles.pointsText}>0</Text>
+            <Text style={styles.pointsText}>{user?.points || 0}</Text>
             <View style={styles.pointsBadge}>
               <Text style={styles.pointsBadgeText}>Puntos</Text>
             </View>
           </View>
+
+          <View style={styles.progressRow}>
+            <Text style={styles.progressNextLabel}>{vipInfo.next}</Text>
+          </View>
+          
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: '0%' }]} />
+            <View style={[styles.progressFill, { width: `${vipInfo.progress}%`, backgroundColor: vipInfo.color }]} />
           </View>
         </View>
 
@@ -180,38 +223,40 @@ const ClientDashboardScreen = ({ navigation }) => {
         </View>
 
         {/* Featured Restaurants */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sedes Destacadas</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.horizontalScroll}
-            contentContainerStyle={styles.horizontalContent}
-          >
-            {featuredRestaurants.map((restaurant, index) => (
-              <TouchableOpacity
-                key={restaurant.id || index}
-                style={styles.featuredCard}
-                onPress={() => navigation.navigate('RestaurantMenu', { id: restaurant.id })}
-                activeOpacity={0.8}
-              >
-                <Image
-                  source={{
-                    uri: restaurant.cover_image_url || restaurant.logo_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80',
-                  }}
-                  style={styles.featuredImage}
-                  resizeMode="cover"
-                />
-                <View style={styles.featuredContent}>
-                  <Text style={styles.featuredCategory}>{restaurant.category || 'Casual'}</Text>
-                  <Text style={styles.featuredName} numberOfLines={1}>
-                    {restaurant.name}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
+        {featuredRestaurants.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Sedes Destacadas</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.horizontalScroll}
+              contentContainerStyle={styles.horizontalContent}
+            >
+              {featuredRestaurants.map((restaurant, index) => (
+                <TouchableOpacity
+                  key={restaurant.id || restaurant._id || index}
+                  style={styles.featuredCard}
+                  onPress={() => navigation.navigate('RestaurantMenu', { id: restaurant.id || restaurant._id })}
+                  activeOpacity={0.8}
+                >
+                  <Image
+                    source={{
+                      uri: restaurant.cover_image_url || restaurant.logo_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80',
+                    }}
+                    style={styles.featuredImage}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.featuredContent}>
+                    <Text style={styles.featuredCategory}>{restaurant.category || 'Casual'}</Text>
+                    <Text style={styles.featuredName} numberOfLines={1}>
+                      {restaurant.name}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
 
         {/* Categories */}
         <View style={styles.categoriesContainer}>
@@ -220,7 +265,8 @@ const ClientDashboardScreen = ({ navigation }) => {
         </View>
 
         {/* Restaurants Grid */}
-        <View style={styles.section}>
+        <View style={[styles.section, { paddingTop: 0 }]}>
+          <Text style={styles.sectionTitle}>Sedes Disponibles</Text>
           {filteredRestaurants.length === 0 ? (
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyIcon}>🍽️</Text>
@@ -249,6 +295,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: SPACING.xxl,
+    backgroundColor: COLORS.background,
   },
   loadingText: {
     fontSize: FONT_SIZE.xs,
@@ -260,10 +307,10 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: SPACING.xl,
+    paddingTop: 50,
     backgroundColor: COLORS.surface,
-    borderBottomWidth: 2,
-    borderBottomColor: COLORS.secondary,
-    ...SHADOWS.md,
+    borderBottomWidth: 4,
+    borderColor: COLORS.secondary,
   },
   logoContainer: {
     flexDirection: 'row',
@@ -280,9 +327,9 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
   headerBadge: {
-    fontSize: FONT_SIZE.xs,
-    fontWeight: '800',
-    color: COLORS.primary,
+    fontSize: 9,
+    fontWeight: '950',
+    color: COLORS.primaryDark,
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: SPACING.xs,
@@ -296,27 +343,32 @@ const styles = StyleSheet.create({
     lineHeight: 38,
   },
   headerTitleAccent: {
-    color: COLORS.primary,
+    color: COLORS.primaryDark,
   },
-  headerSubtitle: {
+  welcomeText: {
     fontSize: FONT_SIZE.sm,
-    fontWeight: '600',
-    color: COLORS.textLight,
-    marginTop: SPACING.xs,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+    marginTop: SPACING.sm,
   },
   vipCard: {
-    margin: SPACING.lg,
+    margin: SPACING.md,
     padding: SPACING.lg,
     backgroundColor: COLORS.surface,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: COLORS.secondary,
-    borderRadius: 12,
-    ...SHADOWS.lg,
+    borderRadius: 16,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 6,
   },
   vipLabel: {
-    fontSize: FONT_SIZE.xs,
-    fontWeight: '800',
-    color: COLORS.primary,
+    fontSize: 10,
+    fontWeight: '950',
+    color: COLORS.primaryDark,
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: SPACING.xs,
@@ -324,14 +376,13 @@ const styles = StyleSheet.create({
   vipLevel: {
     fontSize: FONT_SIZE.xl,
     fontWeight: '900',
-    color: COLORS.secondary,
     textTransform: 'uppercase',
     marginBottom: SPACING.md,
   },
   pointsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.sm,
   },
   pointsText: {
     fontSize: 48,
@@ -343,32 +394,44 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.secondary,
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,
-    borderRadius: 4,
-    borderWidth: 2,
+    borderRadius: 6,
+    borderWidth: 1.5,
     borderColor: COLORS.secondary,
   },
   pointsBadgeText: {
-    fontSize: FONT_SIZE.xs,
-    fontWeight: '800',
+    fontSize: 10,
+    fontWeight: '900',
     color: COLORS.surface,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
+  progressRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: SPACING.xs,
+  },
+  progressNextLabel: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: COLORS.textLight,
+    textTransform: 'uppercase',
+  },
   progressBar: {
-    height: 3,
-    backgroundColor: `${COLORS.secondary}10`,
-    borderRadius: 2,
+    height: 10,
+    backgroundColor: `${COLORS.secondary}15`,
+    borderRadius: 5,
     overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: COLORS.primary,
   },
   section: {
-    padding: SPACING.lg,
+    padding: SPACING.md,
   },
   sectionTitle: {
-    fontSize: FONT_SIZE.lg,
+    fontSize: FONT_SIZE.md,
     fontWeight: '900',
     color: COLORS.secondary,
     textTransform: 'uppercase',
@@ -384,23 +447,27 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderWidth: 2,
     borderColor: COLORS.secondary,
-    borderRadius: 12,
-    ...SHADOWS.sm,
+    borderRadius: 14,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
   },
   quickActionIcon: {
     fontSize: 24,
     marginRight: SPACING.md,
   },
   quickActionLabel: {
-    fontSize: FONT_SIZE.xs,
-    fontWeight: '800',
-    color: COLORS.primary,
+    fontSize: 9,
+    fontWeight: '900',
+    color: COLORS.primaryDark,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   quickActionText: {
     fontSize: FONT_SIZE.md,
-    fontWeight: '700',
+    fontWeight: '900',
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
@@ -408,7 +475,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
   },
   horizontalContent: {
-    paddingHorizontal: SPACING.lg,
+    paddingHorizontal: SPACING.xs,
     gap: SPACING.md,
   },
   featuredCard: {
@@ -416,9 +483,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderWidth: 2,
     borderColor: COLORS.secondary,
-    borderRadius: 12,
+    borderRadius: 14,
     overflow: 'hidden',
-    ...SHADOWS.sm,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
   },
   featuredImage: {
     width: '100%',
@@ -428,56 +499,65 @@ const styles = StyleSheet.create({
     padding: SPACING.sm,
   },
   featuredCategory: {
-    fontSize: FONT_SIZE.xs,
-    fontWeight: '800',
-    color: COLORS.primary,
+    fontSize: 9,
+    fontWeight: '900',
+    color: COLORS.primaryDark,
     textTransform: 'uppercase',
     letterSpacing: 1,
-    marginBottom: SPACING.xs,
+    marginBottom: SPACING.xxs,
   },
   featuredName: {
     fontSize: FONT_SIZE.sm,
-    fontWeight: '700',
+    fontWeight: '900',
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
   categoriesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: SPACING.lg,
-    marginBottom: SPACING.lg,
-    gap: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    marginBottom: SPACING.md,
+    gap: SPACING.xs,
   },
   categoryButton: {
     paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
+    paddingVertical: SPACING.sm - 2,
     backgroundColor: COLORS.surface,
     borderWidth: 2,
     borderColor: COLORS.secondary,
-    borderRadius: 8,
+    borderRadius: 10,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 2,
   },
   categoryButtonActive: {
     backgroundColor: COLORS.secondary,
-    ...SHADOWS.sm,
+    shadowOffset: { width: 0, height: 0 },
+    elevation: 0,
   },
   categoryButtonText: {
-    fontSize: FONT_SIZE.xs,
-    fontWeight: '800',
+    fontSize: 10,
+    fontWeight: '900',
     color: COLORS.secondary,
     textTransform: 'uppercase',
-    letterSpacing: 1,
   },
   categoryButtonTextActive: {
     color: COLORS.surface,
   },
   restaurantCard: {
     backgroundColor: COLORS.surface,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: COLORS.secondary,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: SPACING.md,
     overflow: 'hidden',
-    ...SHADOWS.md,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 6,
   },
   cardImageContainer: {
     height: 160,
@@ -493,7 +573,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(28, 23, 18, 0.3)',
+    backgroundColor: 'rgba(28, 23, 18, 0.25)',
   },
   categoryBadge: {
     position: 'absolute',
@@ -501,15 +581,15 @@ const styles = StyleSheet.create({
     right: SPACING.sm,
     backgroundColor: COLORS.primary,
     paddingHorizontal: SPACING.sm,
-    paddingVertical: SPACING.xs,
-    borderRadius: 6,
+    paddingVertical: SPACING.xxs,
+    borderRadius: 8,
     borderWidth: 2,
     borderColor: COLORS.secondary,
   },
   categoryBadgeText: {
-    fontSize: FONT_SIZE.xs,
-    fontWeight: '800',
-    color: COLORS.surface,
+    fontSize: 10,
+    fontWeight: '950',
+    color: COLORS.secondary,
     textTransform: 'uppercase',
   },
   cardContent: {
@@ -520,14 +600,14 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: COLORS.secondary,
     textTransform: 'uppercase',
-    marginBottom: SPACING.sm,
+    marginBottom: SPACING.xs,
   },
   cardInfo: {
     marginBottom: SPACING.sm,
   },
   cardInfoText: {
-    fontSize: FONT_SIZE.xs,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '800',
     color: COLORS.textLight,
     textTransform: 'uppercase',
   },
@@ -536,17 +616,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: SPACING.sm,
-    borderTopWidth: 1,
+    borderTopWidth: 2,
     borderTopColor: `${COLORS.secondary}10`,
   },
   ratingText: {
     fontSize: FONT_SIZE.sm,
-    fontWeight: '700',
-    color: COLORS.primary,
+    fontWeight: '900',
+    color: COLORS.primaryDark,
   },
   viewMenuText: {
-    fontSize: FONT_SIZE.xs,
-    fontWeight: '800',
+    fontSize: 11,
+    fontWeight: '900',
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
@@ -554,9 +634,9 @@ const styles = StyleSheet.create({
     padding: SPACING.xxl,
     backgroundColor: COLORS.surface,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: COLORS.secondary,
     borderStyle: 'dashed',
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: 'center',
   },
   emptyIcon: {
@@ -572,7 +652,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: FONT_SIZE.sm,
-    fontWeight: '500',
+    fontWeight: '700',
     color: COLORS.textLight,
     textAlign: 'center',
   },
