@@ -51,22 +51,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    ...SHADOWS.md,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
   },
   buttonPrimary: {
     backgroundColor: COLORS.primary,
   },
   buttonSecondary: {
     backgroundColor: COLORS.surface,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   text: {
     fontSize: FONT_SIZE.md,
-    fontWeight: '800',
+    fontWeight: '900',
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
@@ -74,7 +78,7 @@ const styles = StyleSheet.create({
     color: COLORS.secondary,
   },
   textSecondary: {
-    color: COLORS.primary,
+    color: COLORS.secondary,
   },
 });
 
