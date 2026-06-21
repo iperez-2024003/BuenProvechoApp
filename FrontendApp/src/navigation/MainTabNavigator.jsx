@@ -2,7 +2,9 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, Text } from 'react-native';
 import { COLORS, SPACING, FONT_SIZE } from '../shared/constants/theme';
-import HomeScreen from '../features/restaurants/screens/HomeScreen';
+import ClientDashboardScreen from '../features/client/screens/ClientDashboardScreen';
+import OrdersScreen from '../features/orders/screens/OrdersScreen';
+import ProfileScreen from '../features/profile/screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,7 +32,7 @@ const MainTabNavigator = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={ClientDashboardScreen}
         options={{
           tabBarLabel: 'Sedes',
           tabBarIcon: ({ focused }) => (
@@ -42,13 +44,7 @@ const MainTabNavigator = () => {
       />
       <Tab.Screen
         name="Orders"
-        component={() => (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ fontSize: FONT_SIZE.md, fontWeight: '700', color: COLORS.textLight }}>
-              Pedidos (Próximamente)
-            </Text>
-          </View>
-        )}
+        component={OrdersScreen}
         options={{
           tabBarLabel: 'Pedidos',
           tabBarIcon: ({ focused }) => (
@@ -60,13 +56,7 @@ const MainTabNavigator = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={() => (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text style={{ fontSize: FONT_SIZE.md, fontWeight: '700', color: COLORS.textLight }}>
-              Perfil (Próximamente)
-            </Text>
-          </View>
-        )}
+        component={ProfileScreen}
         options={{
           tabBarLabel: 'Perfil',
           tabBarIcon: ({ focused }) => (
