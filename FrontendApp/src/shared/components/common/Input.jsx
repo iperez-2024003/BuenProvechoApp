@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextInput, StyleSheet, View, Text } from 'react-native';
-import { COLORS, SPACING, FONT_SIZE } from '../../constants/theme';
+import { COLORS, SPACING, FONT_SIZE, SHADOWS } from '../../constants/theme';
 
 const Input = ({ label, error, ...props }) => {
   return (
@@ -23,19 +23,22 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: FONT_SIZE.sm,
-    fontWeight: '600',
+    fontWeight: '800',
     color: COLORS.text,
     marginBottom: SPACING.xs,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   input: {
     backgroundColor: COLORS.surface,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: COLORS.border,
-    borderRadius: 8,
+    borderRadius: 12,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     fontSize: FONT_SIZE.md,
     color: COLORS.text,
+    ...SHADOWS.sm,
   },
   errorInput: {
     borderColor: COLORS.error,
@@ -44,6 +47,7 @@ const styles = StyleSheet.create({
     color: COLORS.error,
     fontSize: FONT_SIZE.xs,
     marginTop: SPACING.xs,
+    fontWeight: '600',
   },
 });
 
