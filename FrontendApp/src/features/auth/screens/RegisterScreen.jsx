@@ -12,18 +12,33 @@ import { useForm, Controller } from 'react-hook-form';
 import { COLORS, SPACING, FONT_SIZE } from '../../../shared/constants/theme';
 import Input from '../../../shared/components/common/Input';
 import Button from '../../../shared/components/common/Button';
+import { authService } from '../../../shared/api/axiosClient';
 
-// Mock hook de registro de usuario
+// Hook de registro de usuario conectado al backend real
 const useRegister = () => {
   const [isLoading, setIsLoading] = useState(false);
   const registerUser = async (data) => {
     setIsLoading(true);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        setIsLoading(false);
-        resolve({ success: true });
-      }, 1500);
-    });
+    try {
+      const payload = {
+        name: data.name,
+        surname: data.surname,
+        username: data.username,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        role: 'CLIENT_ROLE',
+      };
+      const response = await authService.register(payload);
+      setIsLoading(false);
+      return { success: true, message: response.data.message };
+    } catch (error) {
+      setIsLoading(false);
+      return {
+        success: false,
+        error: error.response?.data?.message || 'Error al registrar la cuenta',
+      };
+    }
   };
   return { registerUser, isLoading };
 };
