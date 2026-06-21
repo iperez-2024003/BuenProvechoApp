@@ -13,6 +13,7 @@ import {
 import { COLORS, SPACING, FONT_SIZE, SHADOWS } from '../../../shared/constants/theme';
 import { restaurantService, menuService } from '../../../shared/api/axiosClient';
 import useCartStore from '../../orders/store/useCartStore';
+import { CartModal } from '../../orders/components/CartModal';
 import ReservationModal from '../../reservations/components/ReservationModal';
 
 const RestaurantMenuScreen = ({ route }) => {
@@ -51,7 +52,7 @@ const RestaurantMenuScreen = ({ route }) => {
       
       // Fetch menus and items independently to avoid cascading errors
       try {
-        const resMenus = await menuService.getAll();
+        const resMenus = await menuService.getAll(id);
         setMenus(resMenus.data.data || resMenus.data || []);
       } catch (menuError) {
         console.error('Error fetching menus:', menuError);
@@ -59,7 +60,7 @@ const RestaurantMenuScreen = ({ route }) => {
       }
       
       try {
-        const resItems = await menuService.getAllItems();
+        const resItems = await menuService.getAllItems({ restaurant_id: id });
         setItems(resItems.data.data || resItems.data || []);
       } catch (itemsError) {
         console.error('Error fetching menu items:', itemsError);
@@ -325,45 +326,11 @@ const RestaurantMenuScreen = ({ route }) => {
       )}
 
       {/* Cart Modal */}
-      <Modal visible={cartOpen} animationType="slide" transparent>
-        <View style={styles.cartModal}>
-          <View style={styles.cartContent}>
-            <View style={styles.cartHeader}>
-              <Text style={styles.cartTitle}>Tu Carrito</Text>
-              <TouchableOpacity onPress={() => setCartOpen(false)}>
-                <Text style={styles.cartCloseText}>✕</Text>
-              </TouchableOpacity>
-            </View>
-            <ScrollView style={styles.cartItems}>
-              {cart.map((item, index) => (
-                <View key={index} style={styles.cartItem}>
-                  <View style={styles.cartItemLeft}>
-                    <Text style={styles.cartItemName}>{item.name}</Text>
-                    {item.notes && <Text style={styles.cartItemNotes}>{item.notes}</Text>}
-                  </View>
-                  <View style={styles.cartItemRight}>
-                    <Text style={styles.cartItemDetails}>
-                      {item.quantity}x Q{item.price}
-                    </Text>
-                    <TouchableOpacity
-                      style={styles.cartRemoveButton}
-                      onPress={() => removeFromCart(item.menuItemId)}
-                    >
-                      <Text style={styles.cartRemoveButtonText}>✕</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ))}
-            </ScrollView>
-            <View style={styles.cartFooter}>
-              <Text style={styles.cartTotal}>Total: Q{getCartTotal()}</Text>
-              <TouchableOpacity style={styles.checkoutButton}>
-                <Text style={styles.checkoutButtonText}>Proceder al Pago</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <CartModal
+        visible={cartOpen}
+        onClose={() => setCartOpen(false)}
+        restaurantId={id}
+      />
 
       {/* Reservation Modal */}
       <ReservationModal
