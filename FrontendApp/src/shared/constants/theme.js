@@ -1,19 +1,20 @@
 export const COLORS = {
-  // Brand Colors
-  primary: "#E25C3D",        // Terracota cálido (gastronómico/marca)
-  primaryDark: "#C44528",    // Terracota oscuro para estados activos
-  secondary: "#1A2530",      // Slate oscuro para headers/destacados
-  accent: "#FBBF24",         // Amarillo/Dorado para valoraciones/estrellas
+  // Brand Colors - BuenProvecho Theme
+  primary: "#caa56d",        // Dorado Principal
+  primaryDark: "#a98042",    // Dorado oscuro para estados activos
+  primaryLight: "#f7f0e2",   // Crema claro
+  secondary: "#1c1712",      // Negro cálido para headers/destacados
+  accent: "#e8c97f",         // Dorado claro para acentos
 
   // Neutral Colors
-  background: "#FDFDFD",     // Blanco roto limpio para el fondo general
-  surface: "#FFFFFF",        // Blanco puro para tarjetas y contenedores
-  border: "#EAEAEF",         // Gris claro sutil para divisiones limpias
+  background: "#fffaf3",     // Crema/beige para el fondo general
+  surface: "#fefcf8",        // Blanco roto para tarjetas y contenedores
+  border: "#f1e4cd",         // Beige claro para divisiones
 
   // Text Colors
-  text: "#1F2937",           // Slate 800 principal para legibilidad óptima
-  textLight: "#6B7280",      // Gris 500 para descripciones secundarias
-  textMuted: "#9CA3AF",      // Gris 400 para placeholders
+  text: "#1c1712",           // Negro cálido principal para legibilidad
+  textLight: "#6b5e4e",      // Marrón apagado para descripciones secundarias
+  textMuted: "#9CA3AF",      // Gris para placeholders
 
   // Semantic Status Colors
   success: "#10B981",        // Verde esmeralda para entregado/pago exitoso
@@ -44,17 +45,31 @@ export const FONT_SIZE = {
 
 export const SHADOWS = {
   sm: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2.0,
+    shadowColor: "#1c1712",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4.0,
     elevation: 2,
   },
   md: {
-    shadowColor: "#000",
+    shadowColor: "#1c1712",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6.0,
+    shadowOpacity: 0.08,
+    shadowRadius: 8.0,
     elevation: 4,
+  },
+  lg: {
+    shadowColor: "#caa56d",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.15,
+    shadowRadius: 15.0,
+    elevation: 8,
+  },
+  premium: {
+    shadowColor: "#1c1712",
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.05,
+    shadowRadius: 25.0,
+    elevation: 12,
   },
 };
