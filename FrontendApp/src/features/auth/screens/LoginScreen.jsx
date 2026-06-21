@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm, Controller } from 'react-hook-form';
-import { COLORS, SPACING, FONT_SIZE } from '../../../shared/constants/theme';
+import { COLORS, SPACING, FONT_SIZE, SHADOWS } from '../../../shared/constants/theme';
 import Input from '../../../shared/components/common/Input';
 import Button from '../../../shared/components/common/Button';
 import { authService } from '../../../shared/api/axiosClient';
@@ -175,32 +175,27 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: COLORS.surface,
     padding: SPACING.lg,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 2,
-    borderColor: COLORS.secondary,
-    // Efecto neo-brutalista similar al de la web (sombra dura)
-    shadowColor: COLORS.secondary,
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    borderColor: COLORS.primary,
+    ...SHADOWS.premium,
   },
   header: {
     alignItems: 'center',
     marginBottom: SPACING.xl,
   },
   title: {
-    fontSize: FONT_SIZE.xxl,
+    fontSize: FONT_SIZE.huge,
     fontWeight: '900',
     color: COLORS.secondary,
     textTransform: 'uppercase',
-    letterSpacing: -1,
+    letterSpacing: -2,
   },
   brandText: {
     color: COLORS.primary,
   },
   subtitle: {
-    fontSize: FONT_SIZE.xs,
+    fontSize: FONT_SIZE.sm,
     fontWeight: '800',
     textTransform: 'uppercase',
     letterSpacing: 2,
@@ -213,14 +208,14 @@ const styles = StyleSheet.create({
   footer: {
     marginTop: SPACING.xl,
     paddingTop: SPACING.lg,
-    borderTopWidth: 1,
+    borderTopWidth: 2,
     borderTopColor: COLORS.border,
     alignItems: 'center',
     gap: SPACING.sm,
   },
   footerText: {
     fontSize: FONT_SIZE.xs,
-    fontWeight: '900',
+    fontWeight: '800',
     textTransform: 'uppercase',
     color: COLORS.textLight,
   },
