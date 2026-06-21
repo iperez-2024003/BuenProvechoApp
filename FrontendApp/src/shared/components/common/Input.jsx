@@ -23,8 +23,8 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: FONT_SIZE.sm,
-    fontWeight: '800',
-    color: COLORS.text,
+    fontWeight: '900',
+    color: COLORS.secondary,
     marginBottom: SPACING.xs,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -32,13 +32,17 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: COLORS.surface,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: COLORS.secondary,
     borderRadius: 12,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     fontSize: FONT_SIZE.md,
     color: COLORS.text,
-    ...SHADOWS.sm,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 3,
   },
   errorInput: {
     borderColor: COLORS.error,
@@ -47,7 +51,8 @@ const styles = StyleSheet.create({
     color: COLORS.error,
     fontSize: FONT_SIZE.xs,
     marginTop: SPACING.xs,
-    fontWeight: '600',
+    fontWeight: '800',
+    textTransform: 'uppercase',
   },
 });
 
