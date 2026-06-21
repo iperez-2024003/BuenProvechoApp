@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,22 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
+  TouchableOpacity,
+  Animated,
+  TextInput,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm, Controller } from 'react-hook-form';
-import { COLORS, SPACING, FONT_SIZE, SHADOWS } from '../../../shared/constants/theme';
-import Input from '../../../shared/components/common/Input';
+import { COLORS, SPACING, FONT_SIZE } from '../../../shared/constants/theme';
 import Button from '../../../shared/components/common/Button';
 import { authService } from '../../../shared/api/axiosClient';
+
+const uploadImages = [
+  require('../../../../assets/img/Restaurante1.webp'),
+  require('../../../../assets/img/Restaurante2.webp'),
+  require('../../../../assets/img/Restaurante3.webp'),
+];
 
 // Hook de autenticación conectado a la API real
 const useAuth = () => {
@@ -54,6 +63,10 @@ const useAuth = () => {
 
 const LoginScreen = ({ navigation }) => {
   const { login, isLoading } = useAuth();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
   const {
     control,
     handleSubmit,
@@ -66,11 +79,32 @@ const LoginScreen = ({ navigation }) => {
     },
   });
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Fade out current image
+      Animated.timing(fadeAnim, {
+        toValue: 0.15,
+        duration: 1000,
+        useNativeDriver: true,
+      }).start(() => {
+        // Change image
+        setCurrentImageIndex((prev) => (prev + 1) % uploadImages.length);
+        // Fade in new image
+        Animated.timing(fadeAnim, {
+          toValue: 0.6,
+          duration: 1000,
+          useNativeDriver: true,
+        }).start();
+      });
+    }, 6000);
+
+    return () => clearInterval(timer);
+  }, [fadeAnim]);
+
   const onSubmit = async (data) => {
     const result = await login(data.email, data.password);
     if (result.success) {
       Alert.alert('Éxito', '¡Bienvenido de nuevo al panel gastronómico!');
-      // Navegar a MainTabs usando reset para limpiar el stack
       navigation.reset({
         index: 0,
         routes: [{ name: 'MainTabs' }],
@@ -89,55 +123,112 @@ const LoginScreen = ({ navigation }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      {/* Background Image Carousel */}
+      <View style={styles.carouselContainer}>
+        <Animated.Image
+          source={uploadImages[currentImageIndex]}
+          style={[styles.carouselImage, { opacity: fadeAnim }]}
+        />
+        <View style={styles.overlay} />
+      </View>
+
+      {/* Geometric Decoration */}
+      <View style={styles.geometricDecoration} />
+
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.formContainer}>
           <View style={styles.header}>
+            <Image
+              source={require('../../../../assets/img/LogoBuenProvecho.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
             <Text style={styles.title}>
               Acceso <Text style={styles.brandText}>VIP</Text>
             </Text>
             <Text style={styles.subtitle}>Panel de Control Gastronómico</Text>
           </View>
 
-          <Controller
-            control={control}
-            rules={{
-              required: 'Ingresa tu usuario o correo',
-              pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                message: 'Formato de correo inválido',
-              },
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Usuario / Email"
-                placeholder="admin@buenprovecho.com"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                error={errors.email?.message}
-              />
+          {/* Email/Username Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Usuario / Email</Text>
+            <Controller
+              control={control}
+              rules={{
+                required: 'Ingresa tu usuario o correo',
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: 'Formato de correo inválido',
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[styles.input, errors.email && styles.errorInput]}
+                  placeholder="admin@buenprovecho.com"
+                  placeholderTextColor={COLORS.textMuted}
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                />
+              )}
+              name="email"
+            />
+            {errors.email?.message && (
+              <Text style={styles.errorText}>{errors.email.message}</Text>
             )}
-            name="email"
-          />
+          </View>
 
-          <Controller
-            control={control}
-            rules={{ required: 'Ingresa tu contraseña' }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Contraseña"
-                placeholder="••••••••"
-                secureTextEntry
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                error={errors.password?.message}
-              />
+          {/* Password Input with custom Eye Toggle */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Contraseña</Text>
+            <Controller
+              control={control}
+              rules={{ required: 'Ingresa tu contraseña' }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View style={[styles.passwordWrapper, errors.password && styles.errorInput]}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder="••••••••"
+                    placeholderTextColor={COLORS.textMuted}
+                    secureTextEntry={!showPassword}
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    autoCapitalize="none"
+                  />
+                  <TouchableOpacity
+                    style={styles.eyeButton}
+                    onPress={() => setShowPassword(!showPassword)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.eyeButtonText}>
+                      {showPassword ? 'Ocultar' : 'Ver'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              name="password"
+            />
+            {errors.password?.message && (
+              <Text style={styles.errorText}>{errors.password.message}</Text>
             )}
-            name="password"
-          />
+          </View>
+
+          {/* Forgot Password Link */}
+          <TouchableOpacity
+            style={styles.forgotPasswordLink}
+            onPress={() =>
+              Alert.alert(
+                'Recuperar Acceso',
+                'Por favor, ponte en contacto con el administrador del sistema para restablecer tus credenciales.'
+              )
+            }
+            activeOpacity={0.7}
+          >
+            <Text style={styles.forgotPasswordText}>¿Olvidaste tu acceso?</Text>
+          </TouchableOpacity>
 
           <Button
             title="Entrar al Sistema"
@@ -148,12 +239,13 @@ const LoginScreen = ({ navigation }) => {
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>¿Nuevo Restaurante?</Text>
-            <Button
-              title="Registrar Cuenta"
-              variant="secondary"
-              onPress={() => navigation.navigate('Register')}
+            <TouchableOpacity
               style={styles.registerButton}
-            />
+              onPress={() => navigation.navigate('Register')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.registerButtonText}>Registrar Cuenta</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -166,9 +258,37 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  carouselContainer: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: -2,
+    backgroundColor: COLORS.secondary,
+  },
+  carouselImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: COLORS.background,
+    opacity: 0.88, // Blend with page background
+  },
+  geometricDecoration: {
+    position: 'absolute',
+    top: -50,
+    right: -50,
+    width: 200,
+    height: 200,
+    backgroundColor: COLORS.primary,
+    opacity: 0.08,
+    borderWidth: 4,
+    borderColor: COLORS.secondary,
+    transform: [{ rotate: '15deg' }],
+    zIndex: -1,
+  },
   scrollContent: {
     flexGrow: 1,
-    padding: SPACING.xl,
+    padding: SPACING.md,
     justifyContent: 'center',
   },
   formContainer: {
@@ -176,38 +296,138 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     padding: SPACING.lg,
     borderRadius: 16,
-    borderWidth: 2,
-    borderColor: COLORS.primary,
-    ...SHADOWS.premium,
+    borderWidth: 4,
+    borderColor: COLORS.secondary,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 8, height: 8 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 8,
   },
   header: {
     alignItems: 'center',
-    marginBottom: SPACING.xl,
+    marginBottom: SPACING.lg,
+  },
+  logo: {
+    width: 140,
+    height: 100,
+    marginBottom: SPACING.xs,
   },
   title: {
-    fontSize: FONT_SIZE.huge,
+    fontSize: FONT_SIZE.xxl,
     fontWeight: '900',
     color: COLORS.secondary,
     textTransform: 'uppercase',
-    letterSpacing: -2,
+    letterSpacing: -1,
   },
   brandText: {
-    color: COLORS.primary,
+    color: COLORS.primaryDark,
   },
   subtitle: {
-    fontSize: FONT_SIZE.sm,
-    fontWeight: '800',
+    fontSize: 10,
+    fontWeight: '900',
     textTransform: 'uppercase',
     letterSpacing: 2,
     color: COLORS.textLight,
+    marginTop: SPACING.xxs,
+  },
+  inputContainer: {
+    marginBottom: SPACING.md,
+    width: '100%',
+  },
+  label: {
+    fontSize: FONT_SIZE.xs,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    marginBottom: SPACING.xs,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  input: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderRadius: 12,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  passwordWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderRadius: 12,
+    paddingRight: SPACING.sm,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  passwordInput: {
+    flex: 1,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text,
+  },
+  eyeButton: {
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    backgroundColor: COLORS.secondary,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: COLORS.secondary,
+  },
+  eyeButtonText: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: COLORS.background,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  errorInput: {
+    borderColor: COLORS.error,
+  },
+  errorText: {
+    color: COLORS.error,
+    fontSize: FONT_SIZE.xs,
     marginTop: SPACING.xs,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  forgotPasswordLink: {
+    alignSelf: 'flex-end',
+    marginBottom: SPACING.lg,
+  },
+  forgotPasswordText: {
+    fontSize: 9,
+    fontWeight: '900',
+    color: COLORS.primaryDark,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   button: {
-    marginTop: SPACING.md,
+    marginTop: SPACING.xs,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
   },
   footer: {
-    marginTop: SPACING.xl,
-    paddingTop: SPACING.lg,
+    marginTop: SPACING.lg,
+    paddingTop: SPACING.md,
     borderTopWidth: 2,
     borderTopColor: COLORS.border,
     alignItems: 'center',
@@ -215,12 +435,30 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: FONT_SIZE.xs,
-    fontWeight: '800',
+    fontWeight: '900',
     textTransform: 'uppercase',
     color: COLORS.textLight,
   },
   registerButton: {
-    marginTop: SPACING.xs,
+    marginTop: SPACING.xxs,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.lg,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    backgroundColor: COLORS.surface,
+    borderRadius: 12,
+    shadowColor: COLORS.primaryDark,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  registerButtonText: {
+    fontSize: 10,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    color: COLORS.secondary,
   },
 });
 
