@@ -72,3 +72,12 @@ const MainTabNavigator = () => {
           tabBarIcon: EventsIcon,
         }}
       />
+
+      <Tab.Screen
+        name="Orders"
+        component={OrdersScreen}
+        options={{
+          tabBarLabel: 'Pedidos',
+          tabBarIcon: OrdersIcon,
+        }}
+      />
