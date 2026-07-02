@@ -323,3 +323,172 @@ const ClientHistoryScreen = () => {
             </View>
           </>
         ) : (
+
+            <>
+            {/* Reservations Filters */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filtersScrollContainer}>
+              {['all', 'confirmed', 'completed', 'cancelled'].map((status) =>
+                renderFilterButton(
+                  status,
+                  reservationFilter === status,
+                  status === 'all' ? 'Todos' : STATUS_TRANSLATIONS[status] || status,
+                  () => setReservationFilter(status)
+                )
+              )}
+            </ScrollView>
+
+            {/* Reservations List */}
+            <View style={styles.section}>
+              {filteredReservations.map((res) => {
+                const resId = res.id || res._id;
+                const statusClass = STATUS_CLASSES[res.status] || { bg: COLORS.background, text: COLORS.secondary, border: COLORS.secondary };
+                return (
+                  <View key={resId} style={styles.card}>
+                    <View style={styles.cardHeader}>
+                      <View>
+                        <Text style={styles.cardLabel}>Sede Gourmet</Text>
+                        <Text style={styles.cardTitle}>{res.restaurant?.name || res.restaurant_name || 'Sede Premium'}</Text>
+                      </View>
+                      <View
+                        style={[
+                          styles.statusBadge,
+                          {
+                            backgroundColor: statusClass.bg,
+                            borderColor: statusClass.border,
+                          },
+                        ]}
+                      >
+                        <Text style={[styles.statusText, { color: statusClass.text }]}>
+                          {STATUS_TRANSLATIONS[res.status] || res.status}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.cardFooter}>
+                      <View style={styles.reservationInfo}>
+                        <Text style={styles.reservationInfoText}>
+                          ⚡ {res.reservation_date} | {res.reservation_time?.slice(0, 5)}
+                        </Text>
+                      </View>
+                      <View style={styles.partySizeBadge}>
+                        <Text style={styles.partySizeText}>{res.party_size} Comensales</Text>
+                      </View>
+                    </View>
+                  </View>
+                );
+              })}
+              {filteredReservations.length === 0 && (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyIcon}>📅</Text>
+                  <Text style={styles.emptyTitle}>Sin reservas registradas</Text>
+                </View>
+              )}
+            </View>
+          </>
+        )}
+      </ScrollView>
+
+      {/* Review Modal */}
+      <Modal visible={reviewModal.open} animationType="fade" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.modalClose}
+              onPress={() => setReviewModal({ open: false, order: null })}
+            >
+              <Text style={styles.modalCloseText}>✕</Text>
+            </TouchableOpacity>
+
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalBadge}>Club Gourmet</Text>
+              <Text style={styles.modalTitle}>Calificar Sabor</Text>
+              <Text style={styles.modalSubtitle}>Tu opinión es la brújula de nuestra excelencia.</Text>
+            </View>
+
+            <View style={styles.modalBody}>
+              <View style={styles.starsContainer}>
+                <StarRating value={rating} onChange={setRating} size={40} />
+              </View>
+
+              <View style={styles.commentContainer}>
+                <Text style={styles.commentLabel}>Tu Comentario</Text>
+                <TextInput
+                  style={styles.commentInput}
+                  value={comment}
+                  onChangeText={setComment}
+                  placeholder="Describe los matices de tu platillo..."
+                  placeholderTextColor={COLORS.textMuted}
+                  multiline
+                  numberOfLines={4}
+                />
+              </View>
+            </View>
+
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.modalCancelButton}
+                onPress={() => setReviewModal({ open: false, order: null })}
+              >
+                <Text style={styles.modalCancelButtonText}>Omitir</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalSubmitButton} onPress={submitReview}>
+                <Text style={styles.modalSubmitButtonText}>Enviar Reseña ✨</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Ticket Modal */}
+      <Modal visible={!!ticketOrder} animationType="fade" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.modalClose}
+              onPress={() => setTicketOrder(null)}
+            >
+              <Text style={styles.modalCloseText}>✕</Text>
+            </TouchableOpacity>
+
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalBadge}>Comprobante</Text>
+              <Text style={styles.modalTitle}>Ticket del Pedido</Text>
+              <Text style={styles.modalSubtitle}>
+                #{ticketOrder?.order_number?.split('-').pop() || '0000'} · {ticketOrder?.restaurant?.name || ticketOrder?.restaurant_name || 'Sede Premium'}
+              </Text>
+            </View>
+
+            <ScrollView style={{ maxHeight: 320 }} contentContainerStyle={{ gap: SPACING.sm, paddingBottom: SPACING.sm }}>
+              <View style={styles.ticketSummaryRow}>
+                <Text style={styles.ticketSummaryLabel}>Estado</Text>
+                <Text style={styles.ticketSummaryValue}>{STATUS_TRANSLATIONS[ticketOrder?.status] || ticketOrder?.status}</Text>
+              </View>
+              <View style={styles.ticketSummaryRow}>
+                <Text style={styles.ticketSummaryLabel}>Fecha</Text>
+                <Text style={styles.ticketSummaryValue}>{ticketOrder?.createdAt ? new Date(ticketOrder.createdAt).toLocaleDateString('es-GT') : 'Reciente'}</Text>
+              </View>
+
+              <View style={styles.ticketItemsBox}>
+                {(ticketOrder?.items || []).map((item, index) => (
+                  <View key={item.id || `${item.menu_item_id}-${index}`} style={styles.ticketItemRow}>
+                    <Text style={styles.ticketItemName}>{item.MenuItem?.name || item.name || 'Platillo'}</Text>
+                    <Text style={styles.ticketItemQty}>x{item.quantity}</Text>
+                  </View>
+                ))}
+              </View>
+
+              <View style={styles.ticketSummaryRow}>
+                <Text style={styles.ticketSummaryLabel}>Total</Text>
+                <Text style={styles.ticketSummaryTotal}>Q{Number(ticketOrder?.total || 0).toFixed(2)}</Text>
+              </View>
+            </ScrollView>
+
+            <TouchableOpacity style={styles.modalSubmitButton} onPress={() => setTicketOrder(null)}>
+              <Text style={styles.modalSubmitButtonText}>Cerrar Ticket</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
