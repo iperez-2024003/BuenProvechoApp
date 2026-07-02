@@ -119,3 +119,34 @@ const LoginScreen = ({ navigation }) => {
       }
     }
   };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      {/* Background Image Carousel */}
+      <View style={styles.carouselContainer}>
+        <Animated.Image
+          source={uploadImages[currentImageIndex]}
+          style={[styles.carouselImage, { opacity: fadeAnim }]}
+        />
+        <View style={styles.overlay} />
+      </View>
+
+      {/* Geometric Decoration */}
+      <View style={styles.geometricDecoration} />
+
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.formContainer}>
+          <View style={styles.header}>
+            <Image
+              source={require('../../../../assets/img/LogoBuenProvecho.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            <Text style={styles.title}>
+              Acceso <Text style={styles.brandText}>VIP</Text>
+            </Text>
+            <Text style={styles.subtitle}>Panel de Control Gastronómico</Text>
+          </View>
