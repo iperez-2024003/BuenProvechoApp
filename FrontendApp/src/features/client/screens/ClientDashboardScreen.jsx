@@ -122,3 +122,54 @@ const ClientDashboardScreen = ({ navigation }) => {
       </Text>
     </TouchableOpacity>
   );
+
+  const renderRestaurantCard = (restaurant, index) => (
+    <TouchableOpacity
+      key={restaurant.id || index}
+      style={styles.restaurantCard}
+      onPress={() => {
+        if (restaurant.id || restaurant._id) {
+          navigation.navigate('RestaurantMenu', { id: restaurant.id || restaurant._id });
+        } else {
+          console.warn('Restaurant ID is undefined, cannot navigate');
+        }
+      }}
+      activeOpacity={0.8}
+    >
+      <View style={styles.cardImageContainer}>
+        <Image
+          source={{
+            uri: restaurant.cover_image_url || restaurant.logo_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80',
+          }}
+          style={styles.cardImage}
+          resizeMode="cover"
+        />
+        <View style={styles.cardImageOverlay} />
+        <View style={styles.categoryBadge}>
+          <Text style={styles.categoryBadgeText}>{restaurant.category || 'Casual'}</Text>
+        </View>
+      </View>
+
+      <View style={styles.cardContent}>
+        <Text style={styles.restaurantName} numberOfLines={1}>
+          {restaurant.name}
+        </Text>
+        <View style={styles.cardInfo}>
+          <Text style={styles.cardInfoText}>📍 {restaurant.address || 'Ubicación Exclusiva'}</Text>
+        </View>
+        <View style={styles.cardFooter}>
+          <Text style={styles.ratingText}>⭐ {restaurant.rating || '4.5'}</Text>
+          <Text style={styles.viewMenuText}>Ver Menú →</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>Cargando Experiencia...</Text>
+      </View>
+    );
+  }
