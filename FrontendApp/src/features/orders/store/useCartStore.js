@@ -8,6 +8,20 @@ const useCartStore = create((set, get) => ({
     loading: false,
     error: null,
 
+    createOrder: async (orderData) => {
+        set({ loading: true, error: null });
+        try {
+            const response = await orderService.create(orderData);
+            get().clearCart();
+            set({ loading: false });
+            return response.data;
+        } catch (error) {
+            const errMsg = error.response?.data?.message || error.message || 'Error al crear la orden';
+            set({ loading: false, error: errMsg });
+            throw error;
+        }
+    },
+
     addToCart: (item, restaurantId) => {
         const currentCart = get().cart;
         const currentRestaurantId = get().restaurantId;
