@@ -17,3 +17,4 @@ const AppNavigator = () => {
         }}
       >
         <Stack.Screen name="Auth" component={AuthStack} />
+        <Stack.Screen name="MainTabs" component={MainTabNavigator} />
