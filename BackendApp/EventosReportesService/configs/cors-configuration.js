@@ -1,5 +1,17 @@
+import { config } from './config.js';
+
+const allowedOrigins = config.cors.allowedOrigins.length > 0
+  ? config.cors.allowedOrigins
+  : ['http://localhost:5173', 'http://localhost:3000', 'https://buenprovecho-web.vercel.app'];
+
 export const corsOptions = {
-  origin: true,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS: origin ${origin} no permitido`));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-token', 'Accept', 'Origin'],

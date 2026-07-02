@@ -881,10 +881,10 @@ export const deleteManager = asyncHandler(async (req, res) => {
 
     // Eliminar registros relacionados manualmente (o dejar que la DB lo haga si hay CASCADE)
     // En este caso, lo haremos por seguridad
-    await UserRole.destroy({ where: { user_id: manager.Id } });
-    await UserProfile.destroy({ where: { user_id: manager.Id } });
-    await UserEmail.destroy({ where: { user_id: manager.Id } });
-    await UserPasswordReset.destroy({ where: { user_id: manager.Id } });
+    await UserRole.destroy({ where: { UserId: manager.Id } });
+    await UserProfile.destroy({ where: { UserId: manager.Id } });
+    await UserEmail.destroy({ where: { UserId: manager.Id } });
+    await UserPasswordReset.destroy({ where: { UserId: manager.Id } });
     
     // Finalmente eliminar al usuario
     await manager.destroy();

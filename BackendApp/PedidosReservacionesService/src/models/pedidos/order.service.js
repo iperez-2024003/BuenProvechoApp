@@ -289,12 +289,12 @@ export const addItemToOrderRecord = async ({ orderId, menu_item_id, quantity, sp
 
   if (!updatedMenuItem) throw new Error('Inventario insuficiente o platillo no disponible');
 
-  const itemSubtotal = Number(menuItem.price) * Number(quantity);
+  const itemSubtotal = Number(updatedMenuItem.price) * Number(quantity);
   const orderItem = await OrderItem.create({
     order_id: String(order._id),
     menu_item_id,
     quantity: Number(quantity),
-    unit_price: Number(menuItem.price),
+    unit_price: Number(updatedMenuItem.price),
     subtotal: Number(itemSubtotal.toFixed(2)),
     special_instructions,
   });

@@ -9,6 +9,7 @@ import { dbConnection } from './db.js';
 import { corsOptions } from './cors-configuration.js';
 import { helmetConfiguration } from './helmet-configuration.js';
 import { initSocket } from '../src/socket/socket.config.js';
+import { errorHandler } from '../middlewares/server-genericError-handler.js';
 
 import orderRoutes from '../src/models/pedidos/order.routes.js';
 import reservationRoutes from '../src/models/reservaciones/reservation.routes.js';
@@ -44,6 +45,8 @@ const routes = (app) => {
       message: 'Endpoint no encontrado',
     });
   });
+
+  app.use(errorHandler);
 };
 
 export const initServer = async () => {

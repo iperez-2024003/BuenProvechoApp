@@ -96,12 +96,15 @@ export const EventModal = ({ isOpen, onClose, onSubmit, creating, initialData = 
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const submitData = { ...form };
-    
-    if (imageFile && imagePreview) {
-      submitData.image_url = imagePreview;
+
+    if (imageFile) {
+      const formData = new FormData();
+      Object.keys(form).forEach((key) => formData.append(key, form[key]));
+      formData.append('banner', imageFile);
+      onSubmit(formData);
+    } else {
+      onSubmit(submitData);
     }
-    
-    onSubmit(submitData);
   };
 
   if (!isOpen) return null;

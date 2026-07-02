@@ -239,7 +239,7 @@ const AnalyticsDashboardComponent = () => {
             variants={itemVariants}
             className="bg-white/80 backdrop-blur-3xl p-5 md:p-8 rounded-[2.5rem] border border-[#dcc7a5]/5 hover:border-[#b98c52]/20 transition-all group relative overflow-hidden"
           >
-            <div className={`absolute -right-4 -bottom-4 w-24 h-24 bg-${kpi.color}-500/5 rounded-full blur-2xl transition-all`} />
+            <div className={`absolute -right-4 -bottom-4 w-24 h-24 rounded-full blur-2xl transition-all ${kpi.color === 'indigo' ? 'bg-indigo-500/5' : kpi.color === 'emerald' ? 'bg-emerald-500/5' : kpi.color === 'amber' ? 'bg-amber-500/5' : 'bg-rose-500/5'}`} />
             <div className="relative z-10 flex flex-col gap-6">
               <div className={`w-14 h-14 bg-[#f3e4ca] border border-[#dcc7a5]/10 text-[#b98c52] rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl`}>
                 <kpi.icon className="w-6 h-6" />

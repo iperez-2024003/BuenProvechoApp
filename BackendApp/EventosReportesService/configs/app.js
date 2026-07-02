@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import { dbConnection } from './db.js';
 import { corsOptions } from './cors-configuration.js';
 import { helmetConfiguration } from './helmet-configuration.js';
+import { errorHandler } from '../middlewares/server-genericError-handler.js';
 
 import eventRoutes from '../src/models/eventos/event.routes.js';
 import statisticsRoutes from '../src/models/estadisticas/statistics.routes.js';
@@ -44,6 +45,8 @@ const routes = (app) => {
       message: 'Endpoint no encontrado',
     });
   });
+
+  app.use(errorHandler);
 };
 
 export const initServer = async () => {

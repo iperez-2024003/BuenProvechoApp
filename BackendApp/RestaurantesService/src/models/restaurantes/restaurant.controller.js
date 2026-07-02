@@ -2,6 +2,9 @@
 
 import os from 'os';
 import Restaurant from './restaurant.model.js';
+import Order from '../pedidos/order.model.js';
+import Table from '../mesas/table.model.js';
+import MenuItem from '../menus/menu-item.model.js';
 import {
   fetchRestaurants,
   fetchRestaurantById,

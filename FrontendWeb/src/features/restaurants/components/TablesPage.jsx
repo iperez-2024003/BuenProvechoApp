@@ -32,15 +32,25 @@ const TablesPage = () => {
     }
   }, [id, getTables, getRestaurants, restaurants.length]);
 
-  const getStatusConfig = (status) => {
-    switch (status) {
-      case 'available': return { color: 'emerald', label: 'Disponible' };
-      case 'occupied': return { color: 'rose', label: 'Ocupada' };
-      case 'reserved': return { color: 'amber', label: 'Reservada' };
-      case 'cleaning': return { color: 'sky', label: 'Limpieza' };
-      default: return { color: 'zinc', label: status };
-    }
+  const statusStyles = {
+    available: 'bg-emerald-500 border-emerald-500/30 text-emerald-400',
+    occupied: 'bg-rose-500 border-rose-500/30 text-rose-400',
+    reserved: 'bg-amber-500 border-amber-500/30 text-amber-400',
+    cleaning: 'bg-sky-500 border-sky-500/30 text-sky-400',
   };
+
+  const statusLabels = {
+    available: 'Disponible',
+    occupied: 'Ocupada',
+    reserved: 'Reservada',
+    cleaning: 'Limpieza',
+  };
+
+  const getStatusConfig = (status) => ({
+    color: statusStyles[status]?.split(' ')[0]?.replace('bg-', '').replace('-500', '') || 'zinc',
+    label: statusLabels[status] || status,
+    styles: statusStyles[status] || 'bg-zinc-500 border-zinc-500/30 text-zinc-400',
+  });
 
   const handleStatusChange = async (tableId, newStatus) => {
     const result = await updateStatus(tableId, newStatus, id);
@@ -132,15 +142,15 @@ const TablesPage = () => {
                     className="relative group"
                   >
                     <div className="bg-white/80 backdrop-blur-3xl rounded-[2.5rem] p-8 border border-[#dcc7a5]/10 hover:border-[#b98c52]/30 transition-all shadow-md flex flex-col items-center text-center">
-                      <div className={`absolute top-6 right-6 w-3 h-3 rounded-full bg-${config.color}-500 shadow-[0_0_15px_rgba(16,185,129,0.4)]`} />
-                      <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 border-2 border-dashed border-${config.color}-500/30 bg-${config.color}-500/5 transition-colors group-hover:scale-105 duration-500`}>
+                      <div className={`absolute top-6 right-6 w-3 h-3 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.4)] ${config.styles.split(' ')[0]}`} />
+                      <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 border-2 border-dashed transition-colors group-hover:scale-105 duration-500 ${config.styles.split(' ').slice(0, 2).join(' ')}`}>
                         <span className="text-4xl">🍽️</span>
                       </div>
                       <h3 className="text-2xl font-black text-zinc-900 mb-1 uppercase tracking-tight">Mesa {table.table_number}</h3>
                       <div className="flex items-center gap-2 mb-6">
                          <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Cap: {table.capacity}</span>
                          <span className="w-1 h-1 rounded-full bg-zinc-800" />
-                         <span className={`text-[9px] font-black uppercase tracking-widest text-${config.color}-400`}>{config.label}</span>
+                         <span className={`text-[9px] font-black uppercase tracking-widest ${config.styles.split(' ')[2]}`}>{config.label}</span>
                       </div>
                       <div className="space-y-3 w-full">
                         <select
