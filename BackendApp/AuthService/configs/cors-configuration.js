@@ -6,7 +6,7 @@ const allowedOrigins = config.cors.allowedOrigins.length > 0
 
 export const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
       callback(null, true);
     } else {
       callback(new Error(`CORS: origin ${origin} no permitido`));
