@@ -90,3 +90,41 @@ const RegisterScreen = ({ navigation }) => {
             </Text>
             <Text style={styles.subtitle}>Únete a la elite de la gestión</Text>
           </View>
+
+          <View style={styles.row}>
+            <View style={styles.flexItem}>
+              <Controller
+                control={control}
+                rules={{ required: 'Requerido' }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="Nombre"
+                    placeholder="Juan"
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    error={errors.name?.message}
+                  />
+                )}
+                name="name"
+              />
+            </View>
+            <View style={styles.spacingHorizontal} />
+            <View style={styles.flexItem}>
+              <Controller
+                control={control}
+                rules={{ required: 'Requerido' }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    label="Apellido"
+                    placeholder="Pérez"
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    error={errors.surname?.message}
+                  />
+                )}
+                name="surname"
+              />
+            </View>
+          </View>
