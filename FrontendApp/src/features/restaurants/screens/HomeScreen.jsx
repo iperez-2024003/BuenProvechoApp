@@ -143,4 +143,41 @@ const HomeScreen = ({ navigation }) => {
         </View>
     );
 
+    return (
+        <View style={styles.container}>
+            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                {/* Header */}
+                <View style={styles.header}>
+                    <Text style={styles.headerBadge}>Red de Negocios</Text>
+                    <Text style={styles.headerTitle}>
+                        Gestión de <Text style={styles.headerTitleAccent}>Sedes</Text>
+                    </Text>
+                    <Text style={styles.headerSubtitle}>Supervisa y controla todos los establecimientos activos.</Text>
+                </View>
+
+                {/* Buscador */}
+                <View style={styles.searchContainer}>
+                    <Text style={styles.searchIcon}>🔍</Text>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="Buscar por nombre, dirección o especialidad..."
+                        placeholderTextColor={COLORS.textMuted}
+                        value={search}
+                        onChangeText={setSearch}
+                    />
+                </View>
+
+                {/* Lista de Restaurantes */}
+                <View style={styles.listContainer}>
+                    {loading ? (
+                        renderLoading()
+                    ) : filteredRestaurants.length === 0 ? (
+                        renderEmpty()
+                    ) : (
+                        filteredRestaurants.map((restaurant, index) => renderRestaurantCard(restaurant, index))
+                    )}
+                </View>
+            </ScrollView>
+        </View>
+    );
 };
