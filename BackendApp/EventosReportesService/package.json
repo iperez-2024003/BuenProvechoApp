@@ -1,0 +1,27 @@
+{
+  "name": "eventos-reportes-service",
+  "version": "1.0.0",
+  "description": "Microservicio de eventos y estadisticas",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "http-proxy-middleware": "^4.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.23.1",
+    "morgan": "^1.10.1",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

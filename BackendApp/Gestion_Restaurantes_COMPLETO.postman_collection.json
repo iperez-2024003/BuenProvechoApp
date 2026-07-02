@@ -1,0 +1,2427 @@
+{
+  "info": {
+    "_postman_id": "de8b7dc2-b163-4622-9353-f65d4fcb8edf",
+    "name": "Gestion Restaurantes - API Completa",
+    "description": "Colección de API estructurada creativamente según los 4 roles principales del sistema.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48332492",
+    "_collection_link": "https://go.postman.co/collection/48332492-de8b7dc2-b163-4622-9353-f65d4fcb8edf?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1. 🌍 Acceso Público & Autenticación",
+      "item": [
+        {
+          "name": "Registrar Usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.user && res.user.id) {",
+                  "    pm.collectionVariables.set('user_id', res.user.id);",
+                  "    console.log('✅ User ID guardado:', res.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Iverson",
+                  "type": "text"
+                },
+                {
+                  "key": "surname",
+                  "value": "Maldonado",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "iversoncrack",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "gestionrestaurante3@gmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "Gestion1234",
+                  "type": "text"
+                },
+                {
+                  "key": "phone",
+                  "value": "55551234",
+                  "type": "text"
+                },
+                {
+                  "key": "profilePicture",
+                  "type": "file",
+                  "description": "Opcional - imagen JPG/PNG/WEBP",
+                  "src": "/C:/Gestion-Restaurantes/uploads-images/Ronald.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Registra un nuevo usuario. Envía email de verificación automáticamente."
+          },
+          "response": []
+        },
+        {
+          "name": "Verificar Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"token\": \"5UVbsuTPHTkT5B-El_lXnLOI5nW3q9mE5uu8upbyWhg\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/auth/verify-email",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "verify-email"
+              ]
+            },
+            "description": "Verifica el email usando el token enviado por correo"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.token) {",
+                  "    pm.collectionVariables.set('token', res.token);",
+                  "    console.log('✅ Token guardado');",
+                  "}",
+                  "if (res.user && res.user.id) {",
+                  "    pm.collectionVariables.set('user_id', res.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"emailOrUsername\": \"gestionrestaurante3@gmail.com\",\n    \"password\": \"Gestion1234\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Inicia sesión con email/username y contraseña. Retorna JWT token."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Restaurantes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/restaurants",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "restaurants"
+              ]
+            },
+            "description": "Lista todos los restaurantes activos"
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Restaurante por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/restaurants/{{restaurant_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "restaurants",
+                "{{restaurant_id}}"
+              ]
+            },
+            "description": "Obtiene detalles de un restaurante específico"
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar por Categoría",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/restaurants?category=fine_dining",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "restaurants"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "fine_dining",
+                  "description": "casual, fine_dining, fast_food, cafe, bar"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar por Tipo de Cocina",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/restaurants?cuisine_type=Italiana",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "restaurants"
+              ],
+              "query": [
+                {
+                  "key": "cuisine_type",
+                  "value": "Italiana"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Categorías de Menú",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/menus?restaurant_id={{restaurant_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "menus"
+              ],
+              "query": [
+                {
+                  "key": "restaurant_id",
+                  "value": "{{restaurant_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Todos los Platillos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/menus/items/all?restaurant_id={{restaurant_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "menus",
+                "items",
+                "all"
+              ],
+              "query": [
+                {
+                  "key": "restaurant_id",
+                  "value": "{{restaurant_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar - Platillos Vegetarianos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/menus/items/all?is_vegetarian=true",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "menus",
+                "items",
+                "all"
+              ],
+              "query": [
+                {
+                  "key": "is_vegetarian",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar - Platillos Veganos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/menus/items/all?is_vegan=true",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "menus",
+                "items",
+                "all"
+              ],
+              "query": [
+                {
+                  "key": "is_vegan",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar - Sin Gluten",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/menus/items/all?is_gluten_free=true",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "menus",
+                "items",
+                "all"
+              ],
+              "query": [
+                {
+                  "key": "is_gluten_free",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Mesas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/tables?restaurant_id={{restaurant_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "tables"
+              ],
+              "query": [
+                {
+                  "key": "restaurant_id",
+                  "value": "{{restaurant_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Mesas Disponibles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/tables/available?restaurant_id={{restaurant_id}}&capacity=4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "tables",
+                "available"
+              ],
+              "query": [
+                {
+                  "key": "restaurant_id",
+                  "value": "{{restaurant_id}}"
+                },
+                {
+                  "key": "capacity",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar - Mesas Terraza",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/tables?restaurant_id={{restaurant_id}}&location=terrace",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "tables"
+              ],
+              "query": [
+                {
+                  "key": "restaurant_id",
+                  "value": "{{restaurant_id}}"
+                },
+                {
+                  "key": "location",
+                  "value": "terrace",
+                  "description": "interior, terrace, vip, bar, window"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Eventos Próximos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/events?upcoming=true",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "upcoming",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Lista eventos próximos (públicos)"
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Evento por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/events/{{event_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{event_id}}"
+              ]
+            },
+            "description": "Obtiene detalles de un evento específico"
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar - Eventos por Tipo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/events?event_type=wine_pairing",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "event_type",
+                  "value": "wine_pairing",
+                  "description": "tasting, cooking_class, wine_pairing, theme_dinner, festival, live_music"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Reseñas por Restaurante",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reviews/restaurant/rest_123",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "restaurant",
+                "rest_123"
+              ]
+            },
+            "description": "Obtiene todas las reseñas de un restaurante específico (Ruta Pública)."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints accesibles sin token o para iniciar sesión/registro."
+    },
+    {
+      "name": "2. 👤 CLIENT_ROLE (Clientes)",
+      "item": [
+        {
+          "name": "Ver Mi Perfil",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3JfZmdoRFcyZnlBTWNpIiwianRpIjoiNDQwY2Y3MzYtZTRlZC00MjNmLWJmNmQtOTk1ZWEyNWU1ZTJmIiwiaWF0IjoxNzcyMjQwODM4LCJyb2xlIjoiVVNFUl9ST0xFIiwiZXhwIjoxNzcyMjQyNjM4LCJhdWQiOiJBdXRoU2VydmljZSIsImlzcyI6IkF1dGhTZXJ2aWNlIn0.GPoUSW8RfG-1QoPRTPTu4NYyc8aROhyxVV2X4XyfjX0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/auth/profile",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "profile"
+              ]
+            },
+            "description": "Obtiene el perfil del usuario autenticado"
+          },
+          "response": []
+        },
+        {
+          "name": "Editar Mi Perfil",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "name",
+                  "value": "Juan Carlos",
+                  "type": "text",
+                  "description": "Opcional"
+                },
+                {
+                  "key": "surname",
+                  "value": "Pérez García",
+                  "type": "text",
+                  "description": "Opcional"
+                },
+                {
+                  "key": "username",
+                  "value": "juancarlos",
+                  "type": "text",
+                  "description": "Opcional"
+                },
+                {
+                  "key": "phone",
+                  "value": "55559999",
+                  "type": "text",
+                  "description": "Opcional - 8 dígitos"
+                },
+                {
+                  "key": "profilePicture",
+                  "type": "file",
+                  "description": "Opcional - sube a Cloudinary",
+                  "value": null,
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/auth/profile",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "profile"
+              ]
+            },
+            "description": "Actualiza nombre, apellido, username, teléfono y/o foto de perfil"
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Contraseña",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"currentPassword\": \"Password123\",\n    \"newPassword\": \"NewPassword456\",\n    \"confirmPassword\": \"NewPassword456\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/auth/profile/change-password",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "profile",
+                "change-password"
+              ]
+            },
+            "description": "Cambia la contraseña (requiere contraseña actual)"
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Mis Pedidos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/orders?user_id={{user_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "{{user_id}}"
+                }
+              ]
+            },
+            "description": "Ver solo mis pedidos"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Reservación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.reservation && res.reservation.id) {",
+                  "    pm.collectionVariables.set('reservation_id', res.reservation.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurant_id\": \"{{restaurant_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"customer_name\": \"María González\",\n  \"customer_phone\": \"55551234\",\n  \"customer_email\": \"maria@test.com\",\n  \"reservation_date\": \"2026-03-15\",\n  \"reservation_time\": \"19:30:00\",\n  \"party_size\": 4,\n  \"special_requests\": \"Mesa junto a ventana\",\n  \"occasion\": \"birthday\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reservations",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reservations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Mis Reservaciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reservations?user_id={{user_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reservations"
+              ],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "{{user_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verificar Disponibilidad",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reservations/check-availability?restaurant_id={{restaurant_id}}&reservation_date=2026-03-20&reservation_time=19:00:00&party_size=4",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reservations",
+                "check-availability"
+              ],
+              "query": [
+                {
+                  "key": "restaurant_id",
+                  "value": "{{restaurant_id}}"
+                },
+                {
+                  "key": "reservation_date",
+                  "value": "2026-03-20"
+                },
+                {
+                  "key": "reservation_time",
+                  "value": "19:00:00"
+                },
+                {
+                  "key": "party_size",
+                  "value": "4"
+                }
+              ]
+            },
+            "description": "Verifica disponibilidad antes de reservar"
+          },
+          "response": []
+        },
+        {
+          "name": "Registrarse en Evento",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"participant_name\": \"María López\",\n  \"participant_email\": \"maria@test.com\",\n  \"participant_phone\": \"87654321\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/events/{{event_id}}/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{event_id}}",
+                "register"
+              ]
+            },
+            "description": "Registrarse como participante en un evento"
+          },
+          "response": []
+        },
+        {
+          "name": "Desregistrarse de Evento",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"participant_email\": \"maria@test.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/events/{{event_id}}/unregister",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{event_id}}",
+                "unregister"
+              ]
+            },
+            "description": "Cancelar registro en un evento"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Reseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"restaurant_id\": \"rest_123\",\n    \"rating\": 5,\n    \"comment\": \"Excelente servicio y comida muy rica.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reviews",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reviews"
+              ]
+            },
+            "description": "Crea una reseña (requiere CLIENT_ROLE)."
+          },
+          "response": []
+        },
+        {
+          "name": "Editar Reseña",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"rating\": 4,\n    \"comment\": \"La comida estaba bien pero tardaron un poco.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reviews/rev_123",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "rev_123"
+              ]
+            },
+            "description": "Actualiza una reseña (solo el autor puede editar)."
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Reseña",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reviews/rev_123",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reviews",
+                "rev_123"
+              ]
+            },
+            "description": "Elimina una reseña (solo el autor o SUPER_ADMIN_ROLE pueden eliminar)."
+          },
+          "response": []
+        }
+      ],
+      "description": "Acciones de clientes: ver restaurantes, menús, hacer pedidos, reservas, reseñas."
+    },
+    {
+      "name": "3. 👨‍🍳 STAFF_ROLE (Empleados)",
+      "item": [
+        {
+          "name": "Actualizar Estado Mesa",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"occupied\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/tables/{{table_id}}/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "tables",
+                "{{table_id}}",
+                "status"
+              ]
+            },
+            "description": "Estados: available, occupied, reserved, cleaning"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Pedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.order && res.order.id) {",
+                  "    pm.collectionVariables.set('order_id', res.order.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"restaurant_id\": \"{{restaurant_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"customer_name\": \"Juan Pérez\",\n  \"order_type\": \"dine_in\",\n  \"items\": [\n    {\n      \"menu_item_id\": \"{{menu_item_id}}\",\n      \"quantity\": 2,\n      \"special_instructions\": \"Sin cebolla\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ]
+            },
+            "description": "Crea un nuevo pedido. El sistema calcula automáticamente IVA 12%"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Estado Pedido",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"preparing\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/orders/{{order_id}}/status",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "orders",
+                "{{order_id}}",
+                "status"
+              ]
+            },
+            "description": "Estados: pending, confirmed, preparing, ready, served, paid"
+          },
+          "response": []
+        }
+      ],
+      "description": "Gestión operativa del restaurante: cambiar estados de pedidos y mesas."
+    },
+    {
+      "name": "4. 🏢 RESTAURANT_ADMIN_ROLE",
+      "item": [
+        {
+          "name": "Actualizar Restaurante",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"La Trattoria Italiana Premium\",\n  \"capacity\": 100\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/restaurants/{{restaurant_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "restaurants",
+                "{{restaurant_id}}"
+              ]
+            },
+            "description": "Actualiza un restaurante (ADMIN)"
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Categoría de Menú",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.menu && res.menu.id) {",
+                  "    pm.collectionVariables.set('menu_id', res.menu.id);",
+                  "    console.log('✅ Menu ID guardado:', res.menu.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3Jfa0hmR0VKYWtFWWptIiwianRpIjoiYzkzZDMzYWYtMmE1Yi00YTRjLTg1MGQtZmJlNWZjMjRiODZmIiwiaWF0IjoxNzcyMjQyMjI5LCJyb2xlIjoiVVNFUl9ST0xFIiwiZXhwIjoxNzcyMjQ0MDI5LCJhdWQiOiJBdXRoU2VydmljZSIsImlzcyI6IkF1dGhTZXJ2aWNlIn0.R7EZxy9yo7oJutsiLOR6-gtbh1a0g_fKZ2zCMyYowNA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Entradas\",\n  \"description\": \"Aperitivos para comenzar\",\n  \"restaurant_id\": \"{{restaurant_id}}\",\n  \"display_order\": 1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/menus",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "menus"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Platillo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.menuItem && res.menuItem.id) {",
+                  "    pm.collectionVariables.set('menu_item_id', res.menuItem.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bruschetta al Pomodoro\",\n  \"description\": \"Pan tostado con tomates frescos\",\n  \"price\": 65.00,\n  \"menu_id\": \"{{menu_id}}\",\n  \"restaurant_id\": \"{{restaurant_id}}\",\n  \"ingredients\": [\"pan\", \"tomates\", \"albahaca\"],\n  \"allergens\": [\"gluten\"],\n  \"preparation_time\": 10,\n  \"is_vegetarian\": true,\n  \"is_vegan\": false\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/menus/items",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "menus",
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Disponibilidad Platillo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_available\": false\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/menus/items/{{menu_item_id}}/toggle",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "menus",
+                "items",
+                "{{menu_item_id}}",
+                "toggle"
+              ]
+            },
+            "description": "Marca un platillo como disponible/no disponible"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Platillo",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/menus/items/{{menu_item_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "menus",
+                "items",
+                "{{menu_item_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Mesa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.table && res.table.id) {",
+                  "    pm.collectionVariables.set('table_id', res.table.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3Jfa0hmR0VKYWtFWWptIiwianRpIjoiYzkzZDMzYWYtMmE1Yi00YTRjLTg1MGQtZmJlNWZjMjRiODZmIiwiaWF0IjoxNzcyMjQyMjI5LCJyb2xlIjoiVVNFUl9ST0xFIiwiZXhwIjoxNzcyMjQ0MDI5LCJhdWQiOiJBdXRoU2VydmljZSIsImlzcyI6IkF1dGhTZXJ2aWNlIn0.R7EZxy9yo7oJutsiLOR6-gtbh1a0g_fKZ2zCMyYowNA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"table_number\": 1,\n  \"capacity\": 4,\n  \"location\": \"interior\",\n  \"floor\": 1,\n  \"restaurant_id\": \"{{restaurant_id}}\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/tables",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "tables"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Todos los Pedidos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/orders?restaurant_id={{restaurant_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "restaurant_id",
+                  "value": "{{restaurant_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar - Pedidos Pagados",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/orders?payment_status=paid",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "payment_status",
+                  "value": "paid"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar - Pedidos Delivery",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/orders?order_type=delivery",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "order_type",
+                  "value": "delivery",
+                  "description": "dine_in, takeout, delivery"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Todas las Reservaciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reservations?restaurant_id={{restaurant_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reservations"
+              ],
+              "query": [
+                {
+                  "key": "restaurant_id",
+                  "value": "{{restaurant_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reservaciones de Hoy",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reservations/today?restaurant_id={{restaurant_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reservations",
+                "today"
+              ],
+              "query": [
+                {
+                  "key": "restaurant_id",
+                  "value": "{{restaurant_id}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirmar Reservación",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reservations/{{reservation_id}}/confirm",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reservations",
+                "{{reservation_id}}",
+                "confirm"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar Reservación",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reservations/{{reservation_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reservations",
+                "{{reservation_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filtrar - Reservaciones Confirmadas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reservations?status=confirmed",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reservations"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "confirmed",
+                  "description": "pending, confirmed, seated, completed, cancelled, no_show"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear Evento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.event && res.event.id) {",
+                  "    pm.collectionVariables.set('event_id', res.event.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Noche de Vinos Italianos\",\n  \"description\": \"Degustación de vinos premium de la Toscana\",\n  \"restaurant_id\": \"{{restaurant_id}}\",\n  \"event_type\": \"wine_pairing\",\n  \"event_date\": \"2026-04-20\",\n  \"start_time\": \"19:00:00\",\n  \"end_time\": \"22:00:00\",\n  \"max_participants\": 30,\n  \"price_per_person\": 450.00,\n  \"requirements\": [\"mayores de 18 años\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/events",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "events"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Evento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Noche de Vinos Italianos Premium\",\n  \"max_participants\": 40,\n  \"price_per_person\": 500.00\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/events/{{event_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{event_id}}"
+              ]
+            },
+            "description": "Actualiza información del evento"
+          },
+          "response": []
+        },
+        {
+          "name": "Cancelar Evento",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/events/{{event_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{event_id}}"
+              ]
+            },
+            "description": "Cancela un evento"
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Participantes del Evento",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/events/{{event_id}}/participants",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "events",
+                "{{event_id}}",
+                "participants"
+              ]
+            },
+            "description": "Lista todos los participantes registrados"
+          },
+          "response": []
+        },
+        {
+          "name": "Overview Restaurante",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/statistics/restaurant/{{restaurant_id}}/overview",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "statistics",
+                "restaurant",
+                "{{restaurant_id}}",
+                "overview"
+              ]
+            },
+            "description": "Resumen general del restaurante"
+          },
+          "response": []
+        },
+        {
+          "name": "Estadísticas de Pedidos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/statistics/restaurant/{{restaurant_id}}/orders?period=month",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "statistics",
+                "restaurant",
+                "{{restaurant_id}}",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "month",
+                  "description": "week, month, year"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Platillos Más Vendidos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/statistics/restaurant/{{restaurant_id}}/popular-dishes?limit=10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "statistics",
+                "restaurant",
+                "{{restaurant_id}}",
+                "popular-dishes"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Gestión administrativa del restaurante: menús, mesas, empleados, reservas y reportes."
+    },
+    {
+      "name": "5. 👑 SUPER_ADMIN_ROLE",
+      "item": [
+        {
+          "name": "Crear Restaurante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.restaurant && res.restaurant.id) {",
+                  "    pm.collectionVariables.set('restaurant_id', res.restaurant.id);",
+                  "    console.log('✅ Restaurant ID guardado:', res.restaurant.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3Jfa0hmR0VKYWtFWWptIiwianRpIjoiYzkzZDMzYWYtMmE1Yi00YTRjLTg1MGQtZmJlNWZjMjRiODZmIiwiaWF0IjoxNzcyMjQyMjI5LCJyb2xlIjoiVVNFUl9ST0xFIiwiZXhwIjoxNzcyMjQ0MDI5LCJhdWQiOiJBdXRoU2VydmljZSIsImlzcyI6IkF1dGhTZXJ2aWNlIn0.R7EZxy9yo7oJutsiLOR6-gtbh1a0g_fKZ2zCMyYowNA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Campero\",\n  \"description\": \"Auténtica cocina italiana\",\n  \"address\": \"5ta Av 12-30, Zona 10, Guatemala\",\n  \"phone\": \"+502 2345-6789\",\n  \"email\": \"contacto@latrattoria.gt\",\n  \"category\": \"fine_dining\",\n  \"cuisine_type\": \"Italiana\",\n  \"price_range\": \"$$$\",\n  \"capacity\": 80,\n  \"opening_time\": \"11:00:00\",\n  \"closing_time\": \"23:00:00\",\n  \"operating_days\": [\"monday\", \"tuesday\", \"wednesday\", \"thursday\", \"friday\", \"saturday\", \"sunday\"],\n  \"accepts_reservations\": true,\n  \"admin_id\": \"usr_kHfGEJakEYjm\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/restaurants",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "restaurants"
+              ]
+            },
+            "description": "Crea un nuevo restaurante (ADMIN)"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar Restaurante",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/restaurants/{{restaurant_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "restaurants",
+                "{{restaurant_id}}"
+              ]
+            },
+            "description": "Elimina un restaurante (soft delete - ADMIN)"
+          },
+          "response": []
+        },
+        {
+          "name": "Resumen Plataforma",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/statistics/platform/summary",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "statistics",
+                "platform",
+                "summary"
+              ]
+            },
+            "description": "Estadísticas globales de la plataforma"
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Usuarios por Rol",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/users/by-role/SUPER_ADMIN_ROLE",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "by-role",
+                "SUPER_ADMIN_ROLE"
+              ],
+              "query": [
+                {
+                  "key": "roleName",
+                  "value": "SUPER_ADMIN_ROLE",
+                  "description": "SUPER_ADMIN_ROLE o CLIENT_ROLE",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Obtiene todos los usuarios con un rol específico (ADMIN)"
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Roles de Usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/users/{{user_id}}/roles",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "{{user_id}}",
+                "roles"
+              ]
+            },
+            "description": "Obtiene los roles de un usuario específico"
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Rol de Usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-token",
+                "value": "{{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"roleName\": \"SUPER_ADMIN_ROLE\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3005/api/v1/users/{{user_id}}/role",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "{{user_id}}",
+                "role"
+              ]
+            },
+            "description": "Cambia el rol de un usuario (solo ADMIN). Valores: SUPER_ADMIN_ROLE, CLIENT_ROLE"
+          },
+          "response": []
+        },
+        {
+          "name": "Horas Pico (Peak Hours)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/statistics/restaurant/{{restaurant_id}}/peak-hours",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "statistics",
+                "restaurant",
+                "{{restaurant_id}}",
+                "peak-hours"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Clientes Frecuentes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/statistics/restaurant/{{restaurant_id}}/frequent-customers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "statistics",
+                "restaurant",
+                "{{restaurant_id}}",
+                "frequent-customers"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Control de la plataforma: creación de restaurantes, gestión de usuarios globales y métricas globales."
+    },
+    {
+      "name": "6. 🧾 Facturación y Reportes",
+      "item": [
+        {
+          "name": "Enviar Factura por Correo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reports/send-invoice/{{order_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "send-invoice",
+                "{{order_id}}"
+              ]
+            },
+            "description": "Genera el HTML de la factura y lo envía al correo del usuario (CLIENT_ROLE)."
+          },
+          "response": []
+        },
+        {
+          "name": "Resumen Diario de Ventas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-token",
+                "value": "{{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:3005/api/v1/reports/daily-summary/{{restaurant_id}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3005",
+              "path": [
+                "api",
+                "v1",
+                "reports",
+                "daily-summary",
+                "{{restaurant_id}}"
+              ]
+            },
+            "description": "Genera estadísticas del día y las envía al correo del administrador del restaurante."
+          },
+          "response": []
+        },
+        {
+          "name": "Descargar Reporte Excel Diario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/reports/daily-excel/{{restaurant_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reports",
+                "daily-excel",
+                "{{restaurant_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints para la generación de facturas electrónicas y reportes gerenciales."
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3005/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "restaurant_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "menu_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "menu_item_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "table_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "order_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "reservation_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "event_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
