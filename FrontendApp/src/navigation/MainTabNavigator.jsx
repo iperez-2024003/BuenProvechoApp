@@ -63,3 +63,12 @@ const MainTabNavigator = () => {
           tabBarIcon: HomeIcon,
         }}
       />
+
+      <Tab.Screen
+        name="Events"
+        component={EventsScreen}
+        options={{
+          tabBarLabel: 'Eventos',
+          tabBarIcon: EventsIcon,
+        }}
+      />
