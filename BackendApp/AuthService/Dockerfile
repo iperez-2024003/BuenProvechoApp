@@ -10,11 +10,12 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 
-# approve-builds: mecanismo nativo de pnpm v10 para autorizar
-# scripts postinstall de paquetes con compilación nativa en
-# entornos CI/CD no interactivos.
-RUN pnpm approve-builds argon2 && \
-    pnpm install --prod --no-frozen-lockfile && \
+# PNPM_ONLY_BUILT_DEPENDENCIES: variable de entorno nativa de pnpm v10.
+# Autoriza únicamente a argon2 a ejecutar su postinstall (compilar
+# binding C++). No depende de .npmrc, CLI flags ni comandos interactivos.
+ENV PNPM_ONLY_BUILT_DEPENDENCIES=argon2
+
+RUN pnpm install --prod --no-frozen-lockfile && \
     pnpm store prune
 
 # ==============================================================
