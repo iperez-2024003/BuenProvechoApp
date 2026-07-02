@@ -79,3 +79,25 @@ const LoginScreen = ({ navigation }) => {
       password: '',
     },
   });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // Fade out current image
+      Animated.timing(fadeAnim, {
+        toValue: 0.15,
+        duration: 1000,
+        useNativeDriver: true,
+      }).start(() => {
+        // Change image
+        setCurrentImageIndex((prev) => (prev + 1) % uploadImages.length);
+        // Fade in new image
+        Animated.timing(fadeAnim, {
+          toValue: 0.6,
+          duration: 1000,
+          useNativeDriver: true,
+        }).start();
+      });
+    }, 6000);
+
+    return () => clearInterval(timer);
+  }, [fadeAnim]);
