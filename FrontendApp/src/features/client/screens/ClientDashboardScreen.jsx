@@ -173,3 +173,50 @@ const ClientDashboardScreen = ({ navigation }) => {
       </View>
     );
   }
+
+  return (
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Header Premium */}
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Text style={styles.logoText}>BUEN</Text>
+            <Text style={[styles.logoText, styles.logoAccent]}>PROVECHO</Text>
+          </View>
+          <Text style={styles.headerBadge}>Dashboard Premium</Text>
+          <Text style={styles.headerTitle}>
+            Tu pase <Text style={styles.headerTitleAccent}>VIP</Text> al sabor
+          </Text>
+          {user && (
+            <Text style={styles.welcomeText}>¡Hola, {user.name || user.username}! 👋</Text>
+          )}
+        </View>
+
+        {/* VIP Points Card */}
+        <View style={styles.vipCard}>
+          <Text style={styles.vipLabel}>Nivel Comensal</Text>
+          <Text style={[styles.vipLevel, { color: vipInfo.color }]}>{vipInfo.level}</Text>
+          
+          <View style={styles.pointsContainer}>
+            <Text style={styles.pointsText}>{user?.points || 0}</Text>
+            <View style={styles.pointsBadge}>
+              <Text style={styles.pointsBadgeText}>Puntos</Text>
+            </View>
+          </View>
+
+          <View style={styles.progressRow}>
+            <Text style={styles.progressNextLabel}>{vipInfo.next}</Text>
+          </View>
+          
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${vipInfo.progress}%`, backgroundColor: vipInfo.color }]} />
+          </View>
+        </View>
+
+        {/* Quick Actions */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Atajos Premium</Text>
+          <View style={styles.quickActionsContainer}>
+            {quickActions.map(renderQuickAction)}
+          </View>
+        </View>
