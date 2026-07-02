@@ -117,6 +117,7 @@ const ClientHistoryScreen = () => {
       Alert.alert('Ticket', 'No se encontró la orden seleccionada.');
       return;
     }
+
     setTicketOrder(order);
   };
 
@@ -323,8 +324,7 @@ const ClientHistoryScreen = () => {
             </View>
           </>
         ) : (
-
-            <>
+          <>
             {/* Reservations Filters */}
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filtersScrollContainer}>
               {['all', 'confirmed', 'completed', 'cancelled'].map((status) =>
@@ -492,3 +492,520 @@ const ClientHistoryScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: SPACING.xl,
+    backgroundColor: COLORS.background,
+  },
+  loadingText: {
+    fontSize: FONT_SIZE.xs,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+    color: COLORS.textLight,
+    marginTop: SPACING.md,
+  },
+  header: {
+    backgroundColor: COLORS.primary,
+    padding: SPACING.lg,
+    paddingTop: 50,
+    borderBottomWidth: 4,
+    borderColor: COLORS.secondary,
+  },
+  headerBadge: {
+    fontSize: 9,
+    fontWeight: '950',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    marginBottom: SPACING.xs,
+    alignSelf: 'flex-start',
+  },
+  headerTitle: {
+    fontSize: FONT_SIZE.xl,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+    letterSpacing: -1,
+  },
+  headerTitleAccent: {
+    color: COLORS.surface,
+  },
+  headerSubtitle: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: COLORS.secondary,
+    marginTop: SPACING.xxs,
+  },
+  tabsContainer: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.surface,
+    borderBottomWidth: 3,
+    borderColor: COLORS.secondary,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: SPACING.md,
+    alignItems: 'center',
+  },
+  tabActive: {
+    backgroundColor: `${COLORS.primary}20`,
+  },
+  tabText: {
+    fontSize: FONT_SIZE.xs,
+    fontWeight: '900',
+    color: COLORS.textLight,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  tabTextActive: {
+    color: COLORS.secondary,
+  },
+  filtersScrollContainer: {
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    gap: SPACING.xs,
+  },
+  filterButton: {
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.xs,
+    backgroundColor: COLORS.surface,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderRadius: 8,
+  },
+  filterButtonActive: {
+    backgroundColor: COLORS.secondary,
+  },
+  filterButtonText: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+  },
+  filterButtonTextActive: {
+    color: COLORS.surface,
+  },
+  section: {
+    padding: SPACING.md,
+  },
+  sectionHeader: {
+    marginBottom: SPACING.md,
+    paddingHorizontal: SPACING.xs,
+  },
+  sectionTitle: {
+    fontSize: FONT_SIZE.md,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+  },
+  sectionSubtitle: {
+    fontSize: 11,
+    color: COLORS.textLight,
+  },
+  card: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderRadius: 12,
+    marginBottom: SPACING.md,
+    padding: SPACING.md,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: SPACING.sm,
+  },
+  cardLabel: {
+    fontSize: 9,
+    fontWeight: '900',
+    color: COLORS.primaryDark,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: SPACING.xxs,
+  },
+  cardTitle: {
+    fontSize: FONT_SIZE.md,
+    fontWeight: '900',
+    color: COLORS.secondary,
+  },
+  cardSub: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: COLORS.textLight,
+    marginTop: 2,
+  },
+  statusBadge: {
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xxs,
+    borderWidth: 2,
+    borderRadius: 6,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
+  cardFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: SPACING.sm,
+    borderTopWidth: 1,
+    borderColor: `${COLORS.secondary}10`,
+  },
+  cardFooterLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  totalText: {
+    fontSize: FONT_SIZE.md,
+    fontWeight: '900',
+    color: COLORS.secondary,
+  },
+  ticketButton: {
+    backgroundColor: COLORS.background,
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xxs,
+    borderRadius: 6,
+  },
+  ticketButtonText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+  },
+  dateText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: COLORS.textMuted,
+  },
+  reservationInfo: {
+    flex: 1,
+  },
+  reservationInfoText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: COLORS.secondary,
+  },
+  partySizeBadge: {
+    backgroundColor: COLORS.background,
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xxs,
+    borderRadius: 6,
+  },
+  partySizeText: {
+    fontSize: 10,
+    fontWeight: '850',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+  },
+  emptyContainer: {
+    padding: SPACING.xl,
+    backgroundColor: COLORS.surface,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderStyle: 'dashed',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyIcon: {
+    fontSize: 40,
+    marginBottom: SPACING.xs,
+  },
+  emptyTitle: {
+    fontSize: FONT_SIZE.sm,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+  },
+  emptyText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: COLORS.textLight,
+    textAlign: 'center',
+    paddingVertical: SPACING.xs,
+  },
+  reviewsGrid: {
+    gap: SPACING.sm,
+  },
+  reviewCard: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderRadius: 12,
+    padding: SPACING.md,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  reviewCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.sm,
+  },
+  reviewBadge: {
+    backgroundColor: COLORS.background,
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
+    paddingHorizontal: SPACING.xs,
+    paddingVertical: SPACING.xxs,
+    borderRadius: 4,
+  },
+  reviewBadgeText: {
+    fontSize: 8,
+    fontWeight: '850',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+  },
+  reviewStar: {
+    fontSize: 18,
+    color: COLORS.primaryDark,
+  },
+  reviewOrderNumber: {
+    fontSize: FONT_SIZE.md,
+    fontWeight: '900',
+    color: COLORS.secondary,
+  },
+  reviewTotal: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: COLORS.primaryDark,
+    marginBottom: SPACING.sm,
+  },
+  reviewButton: {
+    backgroundColor: COLORS.secondary,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    paddingVertical: SPACING.sm,
+    borderRadius: 8,
+    alignItems: 'center',
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 2,
+  },
+  reviewButtonDisabled: {
+    backgroundColor: COLORS.textMuted,
+    borderColor: COLORS.textMuted,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  reviewButtonText: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: COLORS.surface,
+    textTransform: 'uppercase',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(28, 23, 18, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: SPACING.md,
+  },
+  modalContent: {
+    backgroundColor: COLORS.background,
+    borderRadius: 20,
+    padding: SPACING.md,
+    width: '100%',
+    borderWidth: 4,
+    borderColor: COLORS.secondary,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 6,
+  },
+  modalClose: {
+    alignSelf: 'flex-end',
+    padding: SPACING.xs,
+  },
+  modalCloseText: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: COLORS.secondary,
+  },
+  modalHeader: {
+    marginBottom: SPACING.md,
+    alignItems: 'center',
+  },
+  modalBadge: {
+    fontSize: 9,
+    fontWeight: '950',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderWidth: 1.5,
+    borderColor: COLORS.secondary,
+    borderRadius: 6,
+    marginBottom: SPACING.xs,
+  },
+  modalTitle: {
+    fontSize: FONT_SIZE.lg,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+  },
+  modalSubtitle: {
+    fontSize: 11,
+    color: COLORS.textLight,
+    textAlign: 'center',
+  },
+  modalBody: {
+    marginBottom: SPACING.md,
+    gap: SPACING.md,
+  },
+  starsContainer: {
+    alignItems: 'center',
+    paddingVertical: SPACING.xs,
+  },
+  commentContainer: {
+    gap: SPACING.xs,
+  },
+  commentLabel: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+  },
+  commentInput: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderRadius: 10,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.secondary,
+    textAlignVertical: 'top',
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    gap: SPACING.sm,
+  },
+  modalCancelButton: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    paddingVertical: SPACING.md,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  modalCancelButtonText: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: COLORS.textLight,
+    textTransform: 'uppercase',
+  },
+  modalSubmitButton: {
+    flex: 1,
+    backgroundColor: COLORS.secondary,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    paddingVertical: SPACING.md,
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: COLORS.primary,
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 3,
+  },
+  modalSubmitButtonText: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: COLORS.surface,
+    textTransform: 'uppercase',
+  },
+  ticketSummaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: COLORS.surface,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderRadius: 10,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+  },
+  ticketSummaryLabel: {
+    fontSize: 10,
+    fontWeight: '900',
+    color: COLORS.textLight,
+    textTransform: 'uppercase',
+  },
+  ticketSummaryValue: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+  },
+  ticketSummaryTotal: {
+    fontSize: FONT_SIZE.md,
+    fontWeight: '900',
+    color: COLORS.primaryDark,
+  },
+  ticketItemsBox: {
+    backgroundColor: COLORS.background,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderRadius: 12,
+    padding: SPACING.md,
+    gap: SPACING.xs,
+  },
+  ticketItemRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  ticketItemName: {
+    flex: 1,
+    fontSize: 11,
+    fontWeight: '700',
+    color: COLORS.secondary,
+    paddingRight: SPACING.sm,
+  },
+  ticketItemQty: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: COLORS.primaryDark,
+  },
+});
+
+export default ClientHistoryScreen;
