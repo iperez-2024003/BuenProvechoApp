@@ -10,10 +10,10 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 
-# .npmrc local: única forma válida en pnpm v10 para autorizar
-# scripts de compilación nativa sin alterar el código fuente
-# ni usar flags inválidos en la CLI.
-RUN echo 'only-built-dependencies=argon2' > .npmrc && \
+# approve-builds: mecanismo nativo de pnpm v10 para autorizar
+# scripts postinstall de paquetes con compilación nativa en
+# entornos CI/CD no interactivos.
+RUN pnpm approve-builds argon2 && \
     pnpm install --prod --no-frozen-lockfile && \
     pnpm store prune
 
