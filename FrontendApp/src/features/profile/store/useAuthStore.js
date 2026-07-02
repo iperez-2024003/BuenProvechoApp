@@ -85,3 +85,25 @@ const useAuthStore = create((set, get) => ({
         }
     },
 }));
+
+const loadCredentials = async () => {
+    try {
+        const token = await AsyncStorage.getItem('authToken');
+        const userData = await AsyncStorage.getItem('userData');
+        if (token && userData) {
+            const user = JSON.parse(userData);
+            useAuthStore.setState({
+                token,
+                user,
+                role: user.role || 'CLIENT_ROLE',
+                isAuthenticated: true,
+            });
+        }
+    } catch (error) {
+        console.error('Error loading credentials in useAuthStore:', error);
+    }
+};
+
+loadCredentials();
+
+export default useAuthStore;
