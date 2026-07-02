@@ -3,7 +3,7 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Lock, KeyRound, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Lock, KeyRound, ShieldAlert, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../../../shared/components/ui/Button';
 import { Input } from '../../../shared/components/ui/Input';
 import LogoBuenProvecho from '../../../assets/img/LogoBuenProvecho.png';
@@ -15,6 +15,8 @@ export const ResetPasswordPage = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const { resetPassword, isLoading } = useAuthStore();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,24 +64,18 @@ export const ResetPasswordPage = () => {
           </div>
 
           <form className="space-y-8 text-left" onSubmit={handleSubmit}>
-            <Input
-              label="Nueva Contraseña"
-              icon={KeyRound}
-              type="password"
-              placeholder="••••••••"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-            />
-            <Input
-              label="Confirmar Nueva"
-              icon={Lock}
-              type="password"
-              placeholder="••••••••"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Input label="Nueva Contraseña" icon={KeyRound} type={showPassword ? 'text' : 'password'} placeholder="••••••••" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-9 text-[#1c1712]">
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            <div className="relative">
+              <Input label="Confirmar Nueva" icon={Lock} type={showConfirmPassword ? 'text' : 'password'} placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+              <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-9 text-[#1c1712]">
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
             <Button type="submit" isLoading={isLoading} className="w-full py-6">
               Actualizar Acceso
             </Button>

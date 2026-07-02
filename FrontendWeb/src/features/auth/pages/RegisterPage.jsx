@@ -3,7 +3,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { User, Mail, Lock, Phone, ArrowRight, ShieldCheck, UserPlus } from 'lucide-react';
+import { User, Mail, Lock, Phone, ArrowRight, ShieldCheck, UserPlus, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../../../shared/components/ui/Button';
 import { Input } from '../../../shared/components/ui/Input';
 import LogoBuenProvecho from '../../../assets/img/LogoBuenProvecho.png';
@@ -21,6 +21,8 @@ export const RegisterPage = () => {
   });
 
   const [fieldErrors, setFieldErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register, isLoading } = useAuthStore();
   const navigate = useNavigate();
 
@@ -35,10 +37,16 @@ export const RegisterPage = () => {
 
   const validateForm = () => {
     const errors = {};
+    if (!formData.name.trim()) errors.name = "Nombre obligatorio";
+    else if (formData.name.length > 25) errors.name = "Máx 25 caracteres";
+    if (!formData.surname.trim()) errors.surname = "Apellido obligatorio";
+    else if (formData.surname.length > 25) errors.surname = "Máx 25 caracteres";
+    if (!formData.username.trim()) errors.username = "Usuario obligatorio";
+    else if (formData.username.length > 50) errors.username = "Máx 50 caracteres";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) errors.email = "Correo inválido";
     if (formData.password.length < 8) errors.password = "Mínimo 8 caracteres";
     if (formData.password !== formData.confirmPassword) errors.confirmPassword = "No coinciden";
-    if (!formData.phone.match(/^\d{8,15}$/)) errors.phone = "8-15 números";
+    if (!formData.phone.match(/^\d{8}$/)) errors.phone = "Exactamente 8 dígitos";
     return errors;
   };
 
@@ -109,8 +117,18 @@ export const RegisterPage = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-4">
-                <Input label="Contraseña" name="password" icon={Lock} type="password" value={formData.password} onChange={handleChange} required error={fieldErrors.password} />
-                <Input label="Confirmar" name="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleChange} required error={fieldErrors.confirmPassword} />
+                <div className="relative">
+                  <Input label="Contraseña" name="password" icon={Lock} type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange} required error={fieldErrors.password} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-9 text-[#1c1712]">
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+                <div className="relative">
+                  <Input label="Confirmar" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={handleChange} required error={fieldErrors.confirmPassword} />
+                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-4 top-9 text-[#1c1712]">
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
 
               <div className="pt-8 border-t-2 border-[#1c1712] flex flex-col items-center gap-6">

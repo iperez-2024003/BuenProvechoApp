@@ -14,6 +14,7 @@ import { requestLimit } from '../middlewares/request-limit.js';
 import { corsOptions } from './cors-configuration.js';
 import { helmetConfiguration } from './helmet-configuration.js';
 import { errorHandler, notFound } from '../middlewares/server-genericError-handler.js';
+import { verifySmtpConnection } from '../helpers/email-service.js';
 
 import authRoutes from '../src/auth/auth.routes.js';
 import userRoutes from '../src/users/user.routes.js';
@@ -68,6 +69,9 @@ export const initServer = async () => {
     await dbConnection();
     await seedRoles();
     await seedAdminUser();
+
+    // Verificar conexión SMTP (no bloquea el arranque si falla)
+    verifySmtpConnection();
 
     middlewares(app);
     routes(app);
