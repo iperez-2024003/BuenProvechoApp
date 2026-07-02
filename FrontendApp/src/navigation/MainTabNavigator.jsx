@@ -6,3 +6,5 @@ import ClientDashboardScreen from '../features/client/screens/ClientDashboardScr
 import EventsScreen from '../features/events/screens/EventsScreen';
 import OrdersScreen from '../features/orders/screens/OrdersScreen';
 import ProfileScreen from '../features/profile/screens/ProfileScreen';
+
+const Tab = createBottomTabNavigator();
