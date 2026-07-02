@@ -59,3 +59,30 @@ const ClientDashboardScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+  const filteredRestaurants = activeCategory === 'Todos'
+    ? restaurants
+    : restaurants.filter((r) => r.category === activeCategory);
+
+  const featuredRestaurants = restaurants.slice(0, 4);
+
+  const quickActions = [
+    { id: 1, label: 'Explora', action: 'Ver menú', icon: '🍽️', onPress: () => {
+      Alert.alert('Explorar', 'Selecciona una sede de la lista abajo para ver su menú gourmet.');
+    } },
+    { id: 2, label: 'Eventos', action: 'Ver ofertas', icon: '🎉', onPress: () => navigation.navigate('Events') },
+    { id: 3, label: 'Beneficios', action: 'Mi historial', icon: '💎', onPress: () => navigation.navigate('ClientHistory') },
+  ];
+
+  // Helper for VIP Level calculation
+  const getVipLevelInfo = (pts = 0) => {
+    if (pts >= 300) {
+      return { level: 'Miembro Platino 👑', color: '#ec4899', progress: 100, next: 'Máximo nivel' };
+    } else if (pts >= 150) {
+      return { level: 'Miembro Oro 🌟', color: COLORS.primaryDark, progress: ((pts - 150) / 150) * 100, next: `${300 - pts} pts para Platino` };
+    } else {
+      return { level: 'Miembro Gourmet 💎', color: COLORS.secondary, progress: (pts / 150) * 100, next: `${150 - pts} pts para Oro` };
+    }
+  };
+
+  const vipInfo = getVipLevelInfo(user?.points || 0);
