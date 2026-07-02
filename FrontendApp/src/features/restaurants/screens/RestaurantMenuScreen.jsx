@@ -106,4 +106,236 @@ const RestaurantMenuScreen = ({ route }) => {
         return matchesCategory && matchesSearch;
     });
 
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={COLORS.primary} />
+                <Text style={styles.loadingText}>Preparando Experiencia...</Text>
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorIcon}>⚡</Text>
+                <Text style={styles.errorTitle}>Error</Text>
+                <Text style={styles.errorText}>{error}</Text>
+            </View>
+        );
+    }
+
+    if (!restaurant) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorIcon}>⚡</Text>
+                <Text style={styles.errorTitle}>No Disponible</Text>
+                <Text style={styles.errorText}>Este restaurante no se encuentra activo.</Text>
+            </View>
+        );
+    }
+
+    return (
+        <View style={styles.container}>
+            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                {/* Hero Section */}
+                <View style={styles.heroSection}>
+                    <Image
+                        source={{
+                            uri: restaurant.cover_image_url || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80',
+                        }}
+                        style={styles.heroImage}
+                        resizeMode="cover"
+                    />
+                    <View style={styles.heroOverlay} />
+                    <View style={styles.heroContent}>
+                        <View style={styles.logoContainer}>
+                            <Image
+                                source={{ uri: restaurant.logo_url }}
+                                style={styles.logoImage}
+                                resizeMode="contain"
+                            />
+                        </View>
+                        <Text style={styles.heroBadge}>Experiencia Exclusiva</Text>
+                        <Text style={styles.heroTitle}>{restaurant.name}</Text>
+                        <View style={styles.heroBadges}>
+                            <View style={styles.heroBadgeItem}>
+                                <Text style={styles.heroBadgeText}>⭐ {restaurant.rating || '4.9'}</Text>
+                            </View>
+                            <View style={[styles.heroBadgeItem, styles.heroBadgeItemDark]}>
+                                <Text style={styles.heroBadgeTextDark}>📍 {restaurant.category}</Text>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+
+                {/* Reservation Banner */}
+                <View style={styles.reservationBanner}>
+                    <Text style={styles.reservationBadge}>Reservas Exclusivas</Text>
+                    <Text style={styles.reservationTitle}>
+                        Asegura tu <Text style={styles.reservationTitleAccent}>Experiencia</Text>
+                    </Text>
+                    <TouchableOpacity style={styles.reservationButton} onPress={() => setReservationOpen(true)}>
+                        <Text style={styles.reservationButtonText}>Reservar Mesa ✨</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* Search & Categories */}
+                <View style={styles.searchSection}>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesScroll}>
+                        <TouchableOpacity
+                            style={[styles.categoryButton, !activeCategory && styles.categoryButtonActive]}
+                            onPress={() => setActiveCategory(null)}
+                        >
+                            <Text style={[styles.categoryButtonText, !activeCategory && styles.categoryButtonTextActive]}>
+                                Ver Todo
+                            </Text>
+                        </TouchableOpacity>
+                        {menus.map((menu) => (
+                            <TouchableOpacity
+                                key={menu.id}
+                                style={[styles.categoryButton, activeCategory === menu.id && styles.categoryButtonActive]}
+                                onPress={() => setActiveCategory(menu.id)}
+                            >
+                                <Text
+                                    style={[
+                                        styles.categoryButtonText,
+                                        activeCategory === menu.id && styles.categoryButtonTextActive,
+                                    ]}
+                                >
+                                    {menu.name}
+                                </Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+
+                    <View style={styles.searchContainer}>
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Busca tu platillo..."
+                            value={searchTerm}
+                            onChangeText={setSearchTerm}
+                            placeholderTextColor={COLORS.textMuted}
+                        />
+                    </View>
+                </View>
+
+                {/* Menu Items Grid */}
+                <View style={styles.menuSection}>
+                    {categoryItems.length === 0 ? (
+                        <View style={styles.emptyContainer}>
+                            <Text style={styles.emptyIcon}>🍽️</Text>
+                            <Text style={styles.emptyTitle}>Carta en Preparación</Text>
+                            <Text style={styles.emptyText}>Nuestros chefs están diseñando nuevos sabores.</Text>
+                        </View>
+                    ) : (
+                        categoryItems.map((item, index) => (
+                            <View key={item.id} style={styles.menuItemCard}>
+                                <View style={styles.itemImageContainer}>
+                                    {item.image_url ? (
+                                        <Image source={{ uri: item.image_url }} style={styles.itemImage} resizeMode="cover" />
+                                    ) : (
+                                        <View style={styles.itemImagePlaceholder}>
+                                            <Text style={styles.itemImagePlaceholderText}>Sin Imagen</Text>
+                                        </View>
+                                    )}
+                                    <View style={styles.itemBadges}>
+                                        {item.is_vegetarian && (
+                                            <View style={styles.veggieBadge}>
+                                                <Text style={styles.veggieBadgeText}>Veggie</Text>
+                                            </View>
+                                        )}
+                                        {!item.is_available && (
+                                            <View style={styles.outOfStockBadge}>
+                                                <Text style={styles.outOfStockBadgeText}>Agotado</Text>
+                                            </View>
+                                        )}
+                                    </View>
+                                </View>
+
+                                <View style={styles.itemContent}>
+                                    <Text style={styles.itemName} numberOfLines={2}>
+                                        {item.name}
+                                    </Text>
+                                    <Text style={styles.itemDescription} numberOfLines={2}>
+                                        {item.description || 'Una experiencia culinaria inigualable.'}
+                                    </Text>
+
+                                    {item.is_available && (
+                                        <View style={styles.itemActions}>
+                                            <TextInput
+                                                style={styles.notesInput}
+                                                placeholder="Notas especiales..."
+                                                value={itemNotes[item.id] || ''}
+                                                onChangeText={(text) => setItemNotes((prev) => ({ ...prev, [item.id]: text }))}
+                                                placeholderTextColor={COLORS.textMuted}
+                                            />
+
+                                            <View style={styles.itemFooter}>
+                                                <View style={styles.priceContainer}>
+                                                    <Text style={styles.priceLabel}>Precio Unitario</Text>
+                                                    <Text style={styles.price}>
+                                                        <Text style={styles.priceCurrency}>Q</Text>
+                                                        {item.price}
+                                                    </Text>
+                                                </View>
+
+                                                <View style={styles.quantityContainer}>
+                                                    <View style={styles.quantityControls}>
+                                                        <TouchableOpacity
+                                                            style={styles.quantityButton}
+                                                            onPress={() => handleQuantityChange(item.id, -1)}
+                                                        >
+                                                            <Text style={styles.quantityButtonText}>-</Text>
+                                                        </TouchableOpacity>
+                                                        <Text style={styles.quantityText}>{itemQuantities[item.id] || 1}</Text>
+                                                        <TouchableOpacity
+                                                            style={styles.quantityButton}
+                                                            onPress={() => handleQuantityChange(item.id, 1)}
+                                                        >
+                                                            <Text style={styles.quantityButtonText}>+</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                    <TouchableOpacity
+                                                        style={styles.addToCartButton}
+                                                        onPress={() => handleAddToCart(item)}
+                                                    >
+                                                        <Text style={styles.addToCartButtonText}>🛒</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    )}
+                                </View>
+                            </View>
+                        ))
+                    )}
+                </View>
+            </ScrollView>
+
+            {/* Cart Button */}
+            {getCartItemCount() > 0 && (
+                <TouchableOpacity style={styles.cartButton} onPress={() => setCartOpen(true)}>
+                    <View style={styles.cartBadge}>
+                        <Text style={styles.cartBadgeText}>{getCartItemCount()}</Text>
+                    </View>
+                    <Text style={styles.cartButtonText}>Ver Carrito</Text>
+                </TouchableOpacity>
+            )}
+
+            {/* Cart Modal */}
+            <CartModal
+                visible={cartOpen}
+                onClose={() => setCartOpen(false)}
+                restaurantId={id}
+            />
+
+            {/* Reservation Modal */}
+            <ReservationModal
+                visible={reservationOpen}
+                onClose={() => setReservationOpen(false)}
+                restaurant={restaurant}
+            />
+        </View>
+    );
 };
