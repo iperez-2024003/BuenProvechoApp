@@ -16,3 +16,4 @@ const AppNavigator = () => {
           headerShown: false,
         }}
       >
+        <Stack.Screen name="Auth" component={AuthStack} />
