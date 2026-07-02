@@ -61,3 +61,21 @@ const useAuth = () => {
   };
   return { login, isLoading };
 };
+
+const LoginScreen = ({ navigation }) => {
+  const { login, isLoading } = useAuth();
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
