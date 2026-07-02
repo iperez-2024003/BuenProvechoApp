@@ -8,6 +8,7 @@ import RestaurantMenuScreen from '../features/restaurants/screens/RestaurantMenu
 import ClientHistoryScreen from '../features/client/screens/ClientHistoryScreen';
 
 const Stack = createNativeStackNavigator();
+
 const AppNavigator = () => {
   return (
     <NavigationContainer>
@@ -23,15 +24,19 @@ const AppNavigator = () => {
           component={RestaurantDetailScreen}
           options={{ headerShown: true, title: 'Dashboard' }}
         />
-
         <Stack.Screen 
           name="RestaurantMenu" 
           component={RestaurantMenuScreen}
           options={{ headerShown: true, title: 'Menú' }}
         />
-
         <Stack.Screen 
           name="ClientHistory" 
           component={ClientHistoryScreen}
           options={{ headerShown: true, title: 'Mi Historial' }}
         />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default AppNavigator;
