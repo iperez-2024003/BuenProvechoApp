@@ -76,3 +76,17 @@ const RegisterScreen = ({ navigation }) => {
       Alert.alert('Error', result.error || 'No se pudo completar el registro');
     }
   };
+
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.formContainer}>
+          <View style={styles.header}>
+            <Text style={styles.title}>
+              Nueva <Text style={styles.brandText}>Identidad</Text>
+            </Text>
+            <Text style={styles.subtitle}>Únete a la elite de la gestión</Text>
+          </View>
