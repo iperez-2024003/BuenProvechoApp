@@ -181,3 +181,76 @@ const LoginScreen = ({ navigation }) => {
               <Text style={styles.errorText}>{errors.email.message}</Text>
             )}
           </View>
+
+          {/* Password Input with custom Eye Toggle */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Contraseña</Text>
+            <Controller
+              control={control}
+              rules={{ required: 'Ingresa tu contraseña' }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View style={[styles.passwordWrapper, errors.password && styles.errorInput]}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder="••••••••"
+                    placeholderTextColor={COLORS.textMuted}
+                    secureTextEntry={!showPassword}
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    autoCapitalize="none"
+                  />
+                  <TouchableOpacity
+                    style={styles.eyeButton}
+                    onPress={() => setShowPassword(!showPassword)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.eyeButtonText}>
+                      {showPassword ? 'Ocultar' : 'Ver'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              name="password"
+            />
+            {errors.password?.message && (
+              <Text style={styles.errorText}>{errors.password.message}</Text>
+            )}
+          </View>
+
+          {/* Forgot Password Link */}
+          <TouchableOpacity
+            style={styles.forgotPasswordLink}
+            onPress={() =>
+              Alert.alert(
+                'Recuperar Acceso',
+                'Por favor, ponte en contacto con el administrador del sistema para restablecer tus credenciales.'
+              )
+            }
+            activeOpacity={0.7}
+          >
+            <Text style={styles.forgotPasswordText}>¿Olvidaste tu acceso?</Text>
+          </TouchableOpacity>
+
+          <Button
+            title="Entrar al Sistema"
+            onPress={handleSubmit(onSubmit)}
+            loading={isLoading}
+            style={styles.button}
+          />
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>¿Nuevo Restaurante?</Text>
+            <TouchableOpacity
+              style={styles.registerButton}
+              onPress={() => navigation.navigate('Register')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.registerButtonText}>Registrar Cuenta</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+};
