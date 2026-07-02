@@ -63,3 +63,16 @@ const RegisterScreen = ({ navigation }) => {
   });
 
   const password = watch('password');
+
+  const onSubmit = async (data) => {
+    const result = await registerUser(data);
+    if (result.success) {
+      Alert.alert(
+        '¡Registro Exitoso!',
+        'Cuenta creada. Por favor, verifica tu correo antes de iniciar sesión.',
+        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
+      );
+    } else {
+      Alert.alert('Error', result.error || 'No se pudo completar el registro');
+    }
+  };
