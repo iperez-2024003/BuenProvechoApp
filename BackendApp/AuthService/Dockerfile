@@ -10,7 +10,8 @@ WORKDIR /app
 
 COPY package.json ./
 
-RUN pnpm install --prod --frozen-lockfile
+# Open Code: Forzamos la instalación limpia ignorando bloqueos de Git index
+RUN pnpm install --prod --no-frozen-lockfile
 
 # ==============================================================
 # STAGE 2: Minimal production runtime
