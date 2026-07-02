@@ -14,4 +14,32 @@ const RestaurantDetailScreen = ({ route }) => {
     );
 };
 
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: COLORS.background,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: SPACING.lg,
+    },
+    title: {
+        fontSize: FONT_SIZE.xl,
+        fontWeight: '900',
+        color: COLORS.secondary,
+        textTransform: 'uppercase',
+        marginBottom: SPACING.sm,
+    },
+    subtitle: {
+        fontSize: FONT_SIZE.md,
+        fontWeight: '600',
+        color: COLORS.textLight,
+        marginBottom: SPACING.lg,
+    },
+    placeholder: {
+        fontSize: FONT_SIZE.sm,
+        fontWeight: '500',
+        color: COLORS.textMuted,
+    },
+});
+
 export default RestaurantDetailScreen;
