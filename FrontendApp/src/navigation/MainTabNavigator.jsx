@@ -55,7 +55,7 @@ const MainTabNavigator = () => {
         },
       }}
     >
-        <Tab.Screen
+      <Tab.Screen
         name="Home"
         component={ClientDashboardScreen}
         options={{
@@ -63,7 +63,6 @@ const MainTabNavigator = () => {
           tabBarIcon: HomeIcon,
         }}
       />
-
       <Tab.Screen
         name="Events"
         component={EventsScreen}
@@ -72,7 +71,6 @@ const MainTabNavigator = () => {
           tabBarIcon: EventsIcon,
         }}
       />
-
       <Tab.Screen
         name="Orders"
         component={OrdersScreen}
@@ -81,3 +79,16 @@ const MainTabNavigator = () => {
           tabBarIcon: OrdersIcon,
         }}
       />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: 'Perfil',
+          tabBarIcon: ProfileIcon,
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
+
+export default MainTabNavigator;
