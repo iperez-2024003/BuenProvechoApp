@@ -10,12 +10,12 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 
-# PNPM_ONLY_BUILT_DEPENDENCIES: variable de entorno nativa de pnpm v10.
-# Autoriza únicamente a argon2 a ejecutar su postinstall (compilar
-# binding C++). No depende de .npmrc, CLI flags ni comandos interactivos.
-ENV PNPM_ONLY_BUILT_DEPENDENCIES=argon2
-
-RUN pnpm install --prod --no-frozen-lockfile && \
+# Inyecta pnpm.onlyBuiltDependencies en package.json usando el
+# propio Node.js (sin instalar jq ni otras herramientas). Es la
+# única forma que pnpm v10 acepta en CI/CD para autorizar scripts
+# de compilación nativa — package.json > .npmrc > env vars.
+RUN node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));p.pnpm={onlyBuiltDependencies:['argon2']};fs.writeFileSync('package.json',JSON.stringify(p,null,2))" && \
+    pnpm install --prod --no-frozen-lockfile && \
     pnpm store prune
 
 # ==============================================================
