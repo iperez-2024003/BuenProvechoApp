@@ -31,4 +31,45 @@ const RestaurantMenuScreen = ({ route }) => {
     const [reservationOpen, setReservationOpen] = useState(false);
 
     const { cart, addToCart, removeFromCart, updateQuantity, clearCart, getCartTotal, getCartItemCount } = useCartStore();
+
+    useEffect(() => {
+        if (!id) {
+            setError('ID de restaurante no proporcionado');
+            setLoading(false);
+            return;
+        }
+        fetchRestaurantData();
+    }, [id]);
+
+    const fetchRestaurantData = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const resRest = await restaurantService.getById(id);
+            setRestaurant(resRest.data.data || resRest.data);
+
+            try {
+                const resMenus = await menuService.getAll(id);
+                setMenus(resMenus.data.data || resMenus.data || []);
+            } catch (menuError) {
+                console.error('Error fetching menus:', menuError);
+                setMenus([]);
+            }
+
+            try {
+                const resItems = await menuService.getAllItems({ restaurant_id: id });
+                setItems(resItems.data.data || resItems.data || []);
+            } catch (itemsError) {
+                console.error('Error fetching menu items:', itemsError);
+                setItems([]);
+            }
+        } catch (error) {
+            console.error('Error fetching restaurant data:', error);
+            setError('No se pudo cargar la información del restaurante');
+        } finally {
+            setLoading(false);
+        }
+    };
+
 };
