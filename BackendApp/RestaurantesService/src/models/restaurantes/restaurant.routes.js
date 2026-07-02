@@ -65,8 +65,8 @@ router.patch('/:id/verify', [validateJWT, requireSuperAdmin, validateUuidParam('
 
 
 router.get('/:id', validateUuidParam('id'), getRestaurantById);
-router.post('/', [validateJWT, requireRole('SUPER_ADMIN_ROLE', 'RESTAURANT_ADMIN_ROLE'), validateRestaurantCreation, upload.single('logo'), handleUploadError, parseRestaurantFormData], createRestaurant);
-router.put('/:id', [validateJWT, requireAdminOrRestaurantAdmin, validateUuidParam('id'), validateRestaurantUpdate, upload.single('logo'), handleUploadError, parseRestaurantFormData], updateRestaurant);
+router.post('/', [validateJWT, requireRole('SUPER_ADMIN_ROLE', 'RESTAURANT_ADMIN_ROLE'), upload.single('logo'), handleUploadError, parseRestaurantFormData, validateRestaurantCreation], createRestaurant);
+router.put('/:id', [validateJWT, requireAdminOrRestaurantAdmin, validateUuidParam('id'), upload.single('logo'), handleUploadError, parseRestaurantFormData, validateRestaurantUpdate], updateRestaurant);
 router.delete('/:id', [validateJWT, requireSuperAdmin, validateUuidParam('id')], deleteRestaurant);
 
 export default router;

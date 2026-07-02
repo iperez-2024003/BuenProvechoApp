@@ -12,7 +12,7 @@ export const validateRestaurantCreation = [
     .withMessage('Restaurant name is required')
     .isLength({ min: 3, max: 100 })
     .withMessage('Restaurant name must be between 3 and 100 characters')
-    .matches(/^[a-zA-Z0-9\s\-'&,.]+$/)
+    .matches(/^[a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s\-'&,.\/]+$/)
     .withMessage('Restaurant name contains invalid characters'),
 
   body('description')
@@ -207,7 +207,7 @@ export const validateRestaurantCreation = [
     .notEmpty()
     .withMessage('Administrator ID is required')
     .isString()
-    .isLength({ min: 10, max: 20 })
+    .isLength({ min: 10, max: 36 })
     .withMessage('Administrator ID must be a valid String/ID'),
 
   body('parent_restaurant_id')
@@ -242,7 +242,7 @@ export const validateRestaurantUpdate = [
     .trim()
     .isLength({ min: 3, max: 100 })
     .withMessage('Restaurant name must be between 3 and 100 characters')
-    .matches(/^[a-zA-Z0-9\s\-'&,.]+$/)
+    .matches(/^[a-zA-Z0-9áéíóúüñÁÉÍÓÚÜÑ\s\-'&,.\/]+$/)
     .withMessage('Restaurant name contains invalid characters'),
 
   body('description')
@@ -390,8 +390,8 @@ export const validateRestaurantUpdate = [
     .notEmpty()
     .withMessage('Administrator ID is required')
     .isString()
-    .isLength({ min: 10, max: 20 })
-    .withMessage('Administrator ID must be between 10 and 20 characters'), 
+    .isLength({ min: 10, max: 36 })
+    .withMessage('Administrator ID must be between 10 and 36 characters'), 
 
   body('parent_restaurant_id')
     .optional()
