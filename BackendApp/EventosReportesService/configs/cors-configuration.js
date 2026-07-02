@@ -2,7 +2,7 @@ import { config } from './config.js';
 
 const allowedOrigins = config.cors.allowedOrigins.length > 0
   ? config.cors.allowedOrigins
-  : ['http://localhost:5173', 'http://localhost:3000', 'https://buenprovecho-web.vercel.app'];
+  : ['http://localhost:5173', 'http://localhost:3000', 'https://buen-provecho-app.vercel.app'];
 
 export const corsOptions = {
   origin: (origin, callback) => {
