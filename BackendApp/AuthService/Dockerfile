@@ -10,9 +10,10 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 
-# Autoriza argon2 para ejecutar scripts de compilación nativa (pnpm v10
-# bloquea postinstall por defecto). Se aplica vía config antes del install.
-RUN pnpm config set only-built-dependencies argon2 && \
+# .npmrc local: única forma válida en pnpm v10 para autorizar
+# scripts de compilación nativa sin alterar el código fuente
+# ni usar flags inválidos en la CLI.
+RUN echo 'only-built-dependencies=argon2' > .npmrc && \
     pnpm install --prod --no-frozen-lockfile && \
     pnpm store prune
 
