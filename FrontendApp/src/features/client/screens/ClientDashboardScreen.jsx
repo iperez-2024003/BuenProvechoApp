@@ -220,3 +220,63 @@ const ClientDashboardScreen = ({ navigation }) => {
             {quickActions.map(renderQuickAction)}
           </View>
         </View>
+
+        {/* Featured Restaurants */}
+        {featuredRestaurants.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Sedes Destacadas</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.horizontalScroll}
+              contentContainerStyle={styles.horizontalContent}
+            >
+              {featuredRestaurants.map((restaurant, index) => (
+                <TouchableOpacity
+                  key={restaurant.id || restaurant._id || index}
+                  style={styles.featuredCard}
+                  onPress={() => navigation.navigate('RestaurantMenu', { id: restaurant.id || restaurant._id })}
+                  activeOpacity={0.8}
+                >
+                  <Image
+                    source={{
+                      uri: restaurant.cover_image_url || restaurant.logo_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80',
+                    }}
+                    style={styles.featuredImage}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.featuredContent}>
+                    <Text style={styles.featuredCategory}>{restaurant.category || 'Casual'}</Text>
+                    <Text style={styles.featuredName} numberOfLines={1}>
+                      {restaurant.name}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        {/* Categories */}
+        <View style={styles.categoriesContainer}>
+          {renderCategoryButton('Todos')}
+          {categories.map(renderCategoryButton)}
+        </View>
+
+        {/* Restaurants Grid */}
+        <View style={[styles.section, { paddingTop: 0 }]}>
+          <Text style={styles.sectionTitle}>Sedes Disponibles</Text>
+          {filteredRestaurants.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyIcon}>🍽️</Text>
+              <Text style={styles.emptyTitle}>Sin Resultados</Text>
+              <Text style={styles.emptyText}>No hay sedes en esta categoría.</Text>
+            </View>
+          ) : (
+            filteredRestaurants.map((restaurant, index) => renderRestaurantCard(restaurant, index))
+          )}
+        </View>
+      </ScrollView>
+    </View>
+  );
+};
