@@ -219,6 +219,84 @@ const ProfileScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
+            /* Cambio de contraseña */
+            <Modal visible={passModalVisible} animationType="slide" transparent>
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Seguridad</Text>
+                            <TouchableOpacity
+                                style={styles.modalCloseBtn}
+                                onPress={() => setPassModalVisible(false)}
+                            >
+                                <Text style={styles.modalCloseText}>✕</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        <ScrollView style={styles.modalBody}>
+                            <Text style={styles.modalSubtitle}>Modifica tu clave de acceso</Text>
+
+                            <View style={styles.formGroup}>
+                                <Text style={styles.label}>Contraseña Actual</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    secureTextEntry
+                                    value={currentPassword}
+                                    onChangeText={setCurrentPassword}
+                                    placeholder="••••••••"
+                                    placeholderTextColor={COLORS.textMuted}
+                                />
+                            </View>
+
+                            <View style={styles.formGroup}>
+                                <Text style={styles.label}>Nueva Contraseña</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    secureTextEntry
+                                    value={newPassword}
+                                    onChangeText={setNewPassword}
+                                    placeholder="••••••••"
+                                    placeholderTextColor={COLORS.textMuted}
+                                />
+                            </View>
+
+                            <View style={styles.formGroup}>
+                                <Text style={styles.label}>Confirmar Contraseña</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    secureTextEntry
+                                    value={confirmPassword}
+                                    onChangeText={setConfirmPassword}
+                                    placeholder="••••••••"
+                                    placeholderTextColor={COLORS.textMuted}
+                                />
+                            </View>
+                        </ScrollView>
+
+                        <View style={styles.modalFooter}>
+                            <TouchableOpacity
+                                style={[styles.modalBtn, styles.modalCancelBtn]}
+                                onPress={() => setPassModalVisible(false)}
+                            >
+                                <Text style={styles.modalCancelBtnText}>Cancelar</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={[styles.modalBtn, styles.modalSaveBtn]}
+                                onPress={handleChangePassword}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <ActivityIndicator size="small" color={COLORS.surface} />
+                                ) : (
+                                    <Text style={styles.modalSaveBtnText}>Modificar</Text>
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 
