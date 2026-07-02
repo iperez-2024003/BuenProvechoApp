@@ -150,3 +150,34 @@ const LoginScreen = ({ navigation }) => {
             </Text>
             <Text style={styles.subtitle}>Panel de Control Gastronómico</Text>
           </View>
+
+          {/* Email/Username Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Usuario / Email</Text>
+            <Controller
+              control={control}
+              rules={{
+                required: 'Ingresa tu usuario o correo',
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: 'Formato de correo inválido',
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={[styles.input, errors.email && styles.errorInput]}
+                  placeholder="admin@buenprovecho.com"
+                  placeholderTextColor={COLORS.textMuted}
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                />
+              )}
+              name="email"
+            />
+            {errors.email?.message && (
+              <Text style={styles.errorText}>{errors.email.message}</Text>
+            )}
+          </View>
