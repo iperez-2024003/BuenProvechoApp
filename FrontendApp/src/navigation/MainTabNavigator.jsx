@@ -32,3 +32,26 @@ const ProfileIcon = ({ focused }) => (
     <Text style={{ fontSize: 24 }}>{focused ? '👤' : '👤'}</Text>
   </View>
 );
+
+const MainTabNavigator = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.textLight,
+        tabBarStyle: {
+          backgroundColor: COLORS.surface,
+          borderTopWidth: 4,
+          borderTopColor: COLORS.secondary,
+          height: 70,
+          paddingBottom: SPACING.sm,
+          paddingTop: SPACING.sm,
+        },
+        tabBarLabelStyle: {
+          fontSize: FONT_SIZE.xs,
+          fontWeight: '700',
+          textTransform: 'uppercase',
+        },
+      }}
+    >
