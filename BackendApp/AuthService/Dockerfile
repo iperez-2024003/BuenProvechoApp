@@ -10,11 +10,10 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 
-# --allow-build=argon2: pnpm v10 bloquea postinstall scripts por defecto,
-#                       argon2 necesita compilar C++ nativo para el binding.
-# --no-frozen-lockfile: evita errores por discrepancias de lockfile entre
-#                       entornos Windows/Linux.
-RUN pnpm install --prod --no-frozen-lockfile --allow-build=argon2 && \
+# Autoriza argon2 para ejecutar scripts de compilación nativa (pnpm v10
+# bloquea postinstall por defecto). Se aplica vía config antes del install.
+RUN pnpm config set only-built-dependencies argon2 && \
+    pnpm install --prod --no-frozen-lockfile && \
     pnpm store prune
 
 # ==============================================================
