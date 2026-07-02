@@ -29,3 +29,9 @@ const AppNavigator = () => {
           component={RestaurantMenuScreen}
           options={{ headerShown: true, title: 'Menú' }}
         />
+
+        <Stack.Screen 
+          name="ClientHistory" 
+          component={ClientHistoryScreen}
+          options={{ headerShown: true, title: 'Mi Historial' }}
+        />
