@@ -41,6 +41,47 @@ const useAuthStore = create((set, get) => ({
         set({ user: null, token: null, role: null, isAuthenticated: false });
         await AsyncStorage.removeItem('authToken');
         await AsyncStorage.removeItem('userData');
-    }
+    },
 
+    getProfile: async () => {
+        try {
+            const response = await authService.getProfile();
+            const profile = response.data.data || response.data;
+            set({ user: profile });
+            await AsyncStorage.setItem('userData', JSON.stringify(profile));
+            return { success: true, data: profile };
+        } catch (error) {
+            return { success: false, error: error.response?.data?.message || 'Error al cargar perfil' };
+        }
+    },
+
+    updateProfile: async (formData) => {
+        set({ isLoading: true });
+        try {
+            const response = await authService.updateProfile(formData);
+            const profile = response.data.data || response.data;
+            set({ user: profile, isLoading: false });
+            await AsyncStorage.setItem('userData', JSON.stringify(profile));
+            return { success: true, message: response.data.message };
+        } catch (error) {
+            set({ isLoading: false });
+            return { success: false, error: error.response?.data?.message || 'Error al actualizar perfil' };
+        }
+    },
+
+    changePassword: async (currentPassword, newPassword, confirmPassword) => {
+        set({ isLoading: true });
+        try {
+            const response = await authService.changePassword({
+                currentPassword,
+                newPassword,
+                confirmPassword,
+            });
+            set({ isLoading: false });
+            return { success: true, message: response.data.message };
+        } catch (error) {
+            set({ isLoading: false });
+            return { success: false, error: error.response?.data?.message || 'Error al cambiar contraseña' };
+        }
+    },
 }));
