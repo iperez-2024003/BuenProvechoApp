@@ -228,3 +228,98 @@ const ClientHistoryScreen = () => {
                 )
               )}
             </ScrollView>
+
+            {/* Orders List */}
+            <View style={styles.section}>
+              {filteredOrders.map((order) => {
+                const orderId = order.id || order._id;
+                const statusClass = STATUS_CLASSES[order.status] || { bg: COLORS.background, text: COLORS.secondary, border: COLORS.secondary };
+                return (
+                  <View key={orderId} style={styles.card}>
+                    <View style={styles.cardHeader}>
+                      <View>
+                        <Text style={styles.cardLabel}>Orden de Servicio</Text>
+                        <Text style={styles.cardTitle}>#{order.order_number?.split('-').pop() || '0000'}</Text>
+                        <Text style={styles.cardSub}>
+                          {order.restaurant?.name || order.restaurant_name || `Sede #${order.restaurant_id}`}
+                        </Text>
+                      </View>
+                      <View
+                        style={[
+                          styles.statusBadge,
+                          { backgroundColor: statusClass.bg, borderColor: statusClass.border },
+                        ]}
+                      >
+                        <Text style={[styles.statusText, { color: statusClass.text }]}>
+                          {STATUS_TRANSLATIONS[order.status] || order.status}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.cardFooter}>
+                      <View style={styles.cardFooterLeft}>
+                        <Text style={styles.totalText}>Q{Number(order.total).toFixed(2)}</Text>
+                        <TouchableOpacity style={styles.ticketButton} onPress={() => handleDownloadTicket(orderId)}>
+                          <Text style={styles.ticketButtonText}>📄 Ver Ticket</Text>
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={styles.dateText}>
+                        {order.createdAt ? new Date(order.createdAt).toLocaleDateString('es-GT') : 'Reciente'}
+                      </Text>
+                    </View>
+                  </View>
+                );
+              })}
+              {filteredOrders.length === 0 && (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyIcon}>📦</Text>
+                  <Text style={styles.emptyTitle}>Sin órdenes registradas</Text>
+                </View>
+              )}
+            </View>
+
+            {/* Reviews Section */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Califica tu Experiencia</Text>
+                <Text style={styles.sectionSubtitle}>Comparte tu paladar con la comunidad gourmet.</Text>
+              </View>
+
+              <View style={styles.reviewsGrid}>
+                {completedOrders.map((order) => {
+                  const orderId = order.id || order._id;
+                  const isReviewed = reviewedOrders.includes(orderId);
+                  return (
+                    <View key={orderId} style={styles.reviewCard}>
+                      <View style={styles.reviewCardHeader}>
+                        <View style={styles.reviewBadge}>
+                          <Text style={styles.reviewBadgeText}>Finalizado</Text>
+                        </View>
+                        <Text style={styles.reviewStar}>★</Text>
+                      </View>
+                      <Text style={styles.reviewOrderNumber}>#{order.order_number?.split('-').pop()}</Text>
+                      <Text style={styles.reviewTotal}>Q{Number(order.total).toFixed(2)}</Text>
+                      <TouchableOpacity
+                        style={[
+                          styles.reviewButton,
+                          isReviewed && styles.reviewButtonDisabled,
+                        ]}
+                        onPress={() => !isReviewed && setReviewModal({ open: true, order })}
+                        disabled={isReviewed}
+                      >
+                        <Text style={styles.reviewButtonText}>
+                          {isReviewed ? 'Opinión Registrada' : '💬 Dejar Reseña'}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
+                {completedOrders.length === 0 && (
+                  <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>No hay pedidos completados para calificar</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          </>
+        ) : (
