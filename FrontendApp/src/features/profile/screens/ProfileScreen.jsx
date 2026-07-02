@@ -24,4 +24,76 @@ const ProfileScreen = ({ navigation }) => {
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+
+    const handleUpdateProfile = async () => {
+        if (!name.trim()) {
+            Alert.alert('Error', 'El nombre es obligatorio.');
+            return;
+        }
+
+        try {
+            const result = await updateProfile({
+                name: name.trim(),
+                phone: phone.trim(),
+            });
+            if (result.success) {
+                Alert.alert('Éxito', 'Perfil actualizado correctamente.');
+                setIsEditing(false);
+            } else {
+                Alert.alert('Error', result.error || 'No se pudo actualizar.');
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Ocurrió un error inesperado.');
+        }
+    };
+
+    const handleChangePassword = async () => {
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            Alert.alert('Error', 'Todos los campos de contraseña son obligatorios.');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            Alert.alert('Error', 'Las nuevas contraseñas no coinciden.');
+            return;
+        }
+
+        try {
+            const result = await changePassword(currentPassword, newPassword, confirmPassword);
+            if (result.success) {
+                Alert.alert('Éxito', 'Contraseña modificada correctamente.');
+                setPassModalVisible(false);
+                setCurrentPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+            } else {
+                Alert.alert('Error', result.error || 'No se pudo modificar la contraseña.');
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Ocurrió un error inesperado.');
+        }
+    };
+
+    const handleLogout = async () => {
+        Alert.alert('Cerrar Sesión', '¿Estás seguro de que deseas salir del panel?', [
+            { text: 'Cancelar', style: 'cancel' },
+            {
+                text: 'Cerrar Sesión',
+                style: 'destructive',
+                onPress: async () => {
+                    await logout();
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'Auth' }],
+                    });
+                },
+            },
+        ]);
+    };
+
+    const getInitials = () => {
+        const rawName = user?.name || user?.username || 'U';
+        return rawName.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase();
+    };
+
 };
