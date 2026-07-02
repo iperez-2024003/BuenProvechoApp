@@ -100,3 +100,72 @@ const ClientHistoryScreen = () => {
       loadUserAndData();
     }
   };
+
+  const completedOrders = orders.filter((order) => ['served', 'paid'].includes(order.status));
+
+  const filteredOrders = orderFilter === 'all' 
+    ? orders 
+    : orders.filter((order) => order.status === orderFilter);
+
+  const filteredReservations = reservationFilter === 'all'
+    ? reservations
+    : reservations.filter((res) => res.status === reservationFilter);
+
+  const handleDownloadTicket = (orderId) => {
+    const order = orders.find((item) => (item.id || item._id) === orderId);
+    if (!order) {
+      Alert.alert('Ticket', 'No se encontró la orden seleccionada.');
+      return;
+    }
+    setTicketOrder(order);
+  };
+
+  const submitReview = async () => {
+    if (!reviewModal.order) return;
+    setLoading(true);
+    try {
+      const reviewPayload = {
+        restaurant_id: reviewModal.order.restaurant_id,
+        user_id: user.id || user._id,
+        customer_name: user.name || user.username || 'Cliente VIP',
+        rating,
+        comment: comment.trim(),
+      };
+      
+      await restaurantService.createReview(reviewPayload);
+      Alert.alert('Éxito', '¡Gracias por compartir tu opinión gourmet!');
+      setReviewedOrders((prev) => [...prev, reviewModal.order.id || reviewModal.order._id]);
+      setReviewModal({ open: false, order: null });
+      setRating(5);
+      setComment('');
+    } catch (error) {
+      const msg = error.response?.data?.message || error.message || 'Error al enviar la reseña';
+      Alert.alert('Error', msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const renderFilterButton = (statusKey, currentFilter, label, onPress) => {
+    const active = currentFilter === statusKey;
+    return (
+      <TouchableOpacity
+        key={statusKey}
+        onPress={onPress}
+        style={[styles.filterButton, active && styles.filterButtonActive]}
+      >
+        <Text style={[styles.filterButtonText, active && styles.filterButtonTextActive]}>
+          {label}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>Cargando Bitácora...</Text>
+      </View>
+    );
+  }
