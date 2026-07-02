@@ -192,6 +192,7 @@ const RegisterScreen = ({ navigation }) => {
             )}
             name="phone"
           />
+
           <Controller
             control={control}
             rules={{
@@ -257,3 +258,84 @@ const RegisterScreen = ({ navigation }) => {
     </KeyboardAvoidingView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: SPACING.lg,
+    justifyContent: 'center',
+  },
+  formContainer: {
+    width: '100%',
+    backgroundColor: COLORS.surface,
+    padding: SPACING.lg,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    // Neo-brutalismo consistente con Login
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+    marginVertical: SPACING.md,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: SPACING.lg,
+  },
+  title: {
+    fontSize: FONT_SIZE.xxl,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    textTransform: 'uppercase',
+    letterSpacing: -1,
+  },
+  brandText: {
+    color: COLORS.primary,
+  },
+  subtitle: {
+    fontSize: FONT_SIZE.xs,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+    color: COLORS.textLight,
+    marginTop: SPACING.xs,
+  },
+  row: {
+    flexDirection: 'row',
+    width: '100%',
+  },
+  flexItem: {
+    flex: 1,
+  },
+  spacingHorizontal: {
+    width: SPACING.md,
+  },
+  button: {
+    marginTop: SPACING.md,
+  },
+  footer: {
+    marginTop: SPACING.xl,
+    paddingTop: SPACING.lg,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  footerText: {
+    fontSize: FONT_SIZE.xs,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    color: COLORS.textLight,
+  },
+  loginButton: {
+    marginTop: SPACING.xs,
+  },
+});
+
+export default RegisterScreen;
