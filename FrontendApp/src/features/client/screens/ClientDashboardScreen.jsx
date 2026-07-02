@@ -33,3 +33,29 @@ const ClientDashboardScreen = ({ navigation }) => {
     const uniqueCats = [...new Set(restaurants.map((r) => r.category))].filter(Boolean);
     setCategories(uniqueCats);
   }, [restaurants]);
+
+  const loadUser = async () => {
+    try {
+      const userDataJson = await AsyncStorage.getItem('userData');
+      if (userDataJson) {
+        setUser(JSON.parse(userDataJson));
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.error('Error loading user in ClientDashboard:', error);
+    }
+  };
+
+  const fetchRestaurants = async () => {
+    try {
+      setLoading(true);
+      const response = await restaurantService.getAll();
+      setRestaurants(response.data.data || response.data || []);
+    } catch (error) {
+      console.error('Error fetching restaurants:', error);
+      setRestaurants([]);
+    } finally {
+      setLoading(false);
+    }
+  };
