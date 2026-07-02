@@ -72,4 +72,38 @@ const RestaurantMenuScreen = ({ route }) => {
         }
     };
 
+    const handleQuantityChange = (itemId, delta) => {
+        setItemQuantities((prev) => ({
+            ...prev,
+            [itemId]: Math.max(1, (prev[itemId] || 1) + delta),
+        }));
+    };
+
+    const handleAddToCart = (item) => {
+        const quantity = itemQuantities[item.id] || 1;
+        const notes = itemNotes[item.id] || '';
+
+        addToCart(
+            {
+                menuItemId: item.id,
+                name: item.name,
+                price: item.price,
+                quantity,
+                notes,
+            },
+            id
+        );
+
+        setItemQuantities((prev) => ({ ...prev, [item.id]: 1 }));
+        setItemNotes((prev) => ({ ...prev, [item.id]: '' }));
+    };
+
+    const categoryItems = items.filter((item) => {
+        const matchesCategory = activeCategory ? item.menu_id === activeCategory : true;
+        const matchesSearch =
+            item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
+        return matchesCategory && matchesSearch;
+    });
+
 };
