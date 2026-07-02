@@ -8,3 +8,27 @@ import OrdersScreen from '../features/orders/screens/OrdersScreen';
 import ProfileScreen from '../features/profile/screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
+
+const HomeIcon = ({ focused }) => (
+  <View style={{ alignItems: 'center' }}>
+    <Text style={{ fontSize: 24 }}>{focused ? '🏠' : '🏠'}</Text>
+  </View>
+);
+
+const EventsIcon = ({ focused }) => (
+  <View style={{ alignItems: 'center' }}>
+    <Text style={{ fontSize: 24 }}>{focused ? '🎉' : '🎉'}</Text>
+  </View>
+);
+
+const OrdersIcon = ({ focused }) => (
+  <View style={{ alignItems: 'center' }}>
+    <Text style={{ fontSize: 24 }}>{focused ? '📦' : '📦'}</Text>
+  </View>
+);
+
+const ProfileIcon = ({ focused }) => (
+  <View style={{ alignItems: 'center' }}>
+    <Text style={{ fontSize: 24 }}>{focused ? '👤' : '👤'}</Text>
+  </View>
+);
