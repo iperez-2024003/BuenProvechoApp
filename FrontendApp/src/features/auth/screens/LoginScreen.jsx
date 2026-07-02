@@ -101,3 +101,21 @@ const LoginScreen = ({ navigation }) => {
 
     return () => clearInterval(timer);
   }, [fadeAnim]);
+
+
+  const onSubmit = async (data) => {
+    const result = await login(data.email, data.password);
+    if (result.success) {
+      Alert.alert('Éxito', '¡Bienvenido de nuevo al panel gastronómico!');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MainTabs' }],
+      });
+    } else {
+      if (result.code === 'USER_NOT_FOUND' || result.code === 'INVALID_CREDENTIALS') {
+        setError('email', { type: 'manual', message: result.error });
+      } else {
+        Alert.alert('Error', result.error || 'Ocurrió un error inesperado');
+      }
+    }
+  };
