@@ -6,3 +6,5 @@ import MainTabNavigator from './MainTabNavigator';
 import RestaurantDetailScreen from '../features/restaurants/screens/RestaurantDetailScreen';
 import RestaurantMenuScreen from '../features/restaurants/screens/RestaurantMenuScreen';
 import ClientHistoryScreen from '../features/client/screens/ClientHistoryScreen';
+
+const Stack = createNativeStackNavigator();
