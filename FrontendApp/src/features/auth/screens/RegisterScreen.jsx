@@ -128,3 +128,67 @@ const RegisterScreen = ({ navigation }) => {
               />
             </View>
           </View>
+
+          <Controller
+            control={control}
+            rules={{ required: 'Requerido' }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Usuario"
+                placeholder="juanperez"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                autoCapitalize="none"
+                error={errors.username?.message}
+              />
+            )}
+            name="username"
+          />
+
+          <Controller
+            control={control}
+            rules={{
+              required: 'Requerido',
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: 'Correo inválido',
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Email"
+                placeholder="juan@buenprovecho.com"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                error={errors.email?.message}
+              />
+            )}
+            name="email"
+          />
+
+          <Controller
+            control={control}
+            rules={{
+              required: 'Requerido',
+              pattern: {
+                value: /^\d{8,15}$/,
+                message: '8 a 15 dígitos numéricos',
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Teléfono"
+                placeholder="55512345"
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                keyboardType="phone-pad"
+                error={errors.phone?.message}
+              />
+            )}
+            name="phone"
+          />
