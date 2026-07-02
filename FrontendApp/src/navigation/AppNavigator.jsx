@@ -18,3 +18,8 @@ const AppNavigator = () => {
       >
         <Stack.Screen name="Auth" component={AuthStack} />
         <Stack.Screen name="MainTabs" component={MainTabNavigator} />
+        <Stack.Screen 
+          name="RestaurantDetail" 
+          component={RestaurantDetailScreen}
+          options={{ headerShown: true, title: 'Dashboard' }}
+        />
