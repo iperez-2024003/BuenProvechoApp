@@ -8,7 +8,7 @@ import {
   requestLimit,
 } from '../../middlewares/request-limit.js';
 import { validateRefreshTokenMiddleware } from '../../middlewares/refresh-token.js';
-import { upload, handleUploadError } from '../../helpers/file-upload.js';
+import { upload, handleUploadError, optionalUpload } from '../../helpers/file-upload.js';
 import {
   validateRegister,
   validateLogin,
@@ -119,8 +119,7 @@ router.post(
   '/register',
   authRateLimit,
   optionalValidateJWT,
-  upload.single('profilePicture'),
-  handleUploadError,
+  optionalUpload('profilePicture'),
   validateRegister,
   authController.register
 );
@@ -247,8 +246,7 @@ router.put(
 router.put(
   '/profile',
   validateJWT,
-  upload.single('profilePicture'),
-  handleUploadError,
+  optionalUpload('profilePicture'),
   validateUpdateProfile,
   authController.updateProfile
 );

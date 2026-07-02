@@ -6,16 +6,27 @@ import fs from 'fs';
 
 // Crear el directorio de uploads si no existe
 const createUploadDir = () => {
-  if (!fs.existsSync(config.upload.uploadPath)) {
-    fs.mkdirSync(config.upload.uploadPath, { recursive: true });
+  try {
+    if (!fs.existsSync(config.upload.uploadPath)) {
+      fs.mkdirSync(config.upload.uploadPath, { recursive: true });
+    }
+  } catch (err) {
+    if (err.code === 'EACCES') {
+      throw new Error('No se pudo crear el directorio de uploads. Verifica los permisos del servidor.');
+    }
+    throw err;
   }
 };
 
 // Configuración de almacenamiento
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    createUploadDir();
-    cb(null, config.upload.uploadPath);
+    try {
+      createUploadDir();
+      cb(null, config.upload.uploadPath);
+    } catch (err) {
+      cb(err);
+    }
   },
   filename: (req, file, cb) => {
     const uniqueName = `${uuidv4()}${path.extname(file.originalname)}`;
@@ -67,7 +78,7 @@ export const handleUploadError = (error, req, res, next) => {
     }
   }
 
-  if (error.message.includes('Tipo de archivo no permitido')) {
+  if (error.message && error.message.includes('Tipo de archivo no permitido')) {
     return res.status(400).json({
       success: false,
       message: 'Tipo de archivo no permitido',
@@ -75,7 +86,31 @@ export const handleUploadError = (error, req, res, next) => {
     });
   }
 
+  if (error.code === 'EACCES' || (error.message && error.message.includes('permisos'))) {
+    return res.status(400).json({
+      success: false,
+      message: 'No se pudo procesar la imagen. El registro continua sin foto de perfil.',
+      error: 'Error de permisos al guardar el archivo temporal. La imagen no se cargará.',
+    });
+  }
+
   next(error);
+};
+
+/**
+ * Middleware que envuelve upload.single() para que, si falla la subida,
+ * el registro/usuario pueda continuar sin foto de perfil.
+ */
+export const optionalUpload = (fieldName) => (req, res, next) => {
+  const single = upload.single(fieldName);
+  single(req, res, (err) => {
+    if (err) {
+      console.warn(`Upload opcional falló para ${fieldName}:`, err.message || err);
+      // No bloquea — sigue sin archivo
+      return next();
+    }
+    next();
+  });
 };
 
 export const deleteFile = (filename) => {

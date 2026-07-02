@@ -31,6 +31,9 @@ RUN addgroup --system --gid 1001 appgroup && \
 COPY --from=deps --chown=appuser:appgroup /app/node_modules ./node_modules
 COPY --chown=appuser:appgroup . .
 
+# Crear directorio uploads con permisos para appuser (multer)
+RUN mkdir -p uploads && chown -R appuser:appgroup uploads
+
 USER appuser
 
 EXPOSE 3006
