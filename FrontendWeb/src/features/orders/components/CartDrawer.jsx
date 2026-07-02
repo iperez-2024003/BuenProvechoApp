@@ -45,7 +45,7 @@ export const CartDrawer = ({ isOpen, onClose, restaurantId, tableNumber }) => {
           menu_item_id: item.menuItemId,
           quantity: item.quantity,
           price: item.price,
-          notes: item.notes || ''
+          special_instructions: item.notes || ''
         }))
       };
 

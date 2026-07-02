@@ -370,6 +370,46 @@ export const validateRestaurantUpdate = [
     .isBoolean()
     .withMessage('accepts_delivery must be a boolean'),
 
+  body('parking_available')
+    .optional()
+    .isBoolean()
+    .withMessage('parking_available must be a boolean'),
+
+  body('wifi_available')
+    .optional()
+    .isBoolean()
+    .withMessage('wifi_available must be a boolean'),
+
+  body('outdoor_seating')
+    .optional()
+    .isBoolean()
+    .withMessage('outdoor_seating must be a boolean'),
+
+  body('pet_friendly')
+    .optional()
+    .isBoolean()
+    .withMessage('pet_friendly must be a boolean'),
+
+  body('wheelchair_accessible')
+    .optional()
+    .isBoolean()
+    .withMessage('wheelchair_accessible must be a boolean'),
+
+  body('social_media')
+    .optional()
+    .isObject()
+    .withMessage('Social media must be an object'),
+
+  body('payment_methods')
+    .optional()
+    .isArray()
+    .withMessage('Payment methods must be an array'),
+
+  body('special_features')
+    .optional()
+    .isArray()
+    .withMessage('Special features must be an array'),
+
   body('latitude')
     .optional()
     .isFloat({ min: -90, max: 90 })

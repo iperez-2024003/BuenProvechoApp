@@ -170,6 +170,11 @@ export const validateMenuItemCreation = [
     .isLength({ max: 50 })
     .withMessage('Portion size cannot exceed 50 characters'),
 
+  body('stock_quantity')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('Stock quantity must be a non-negative integer'),
+
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -268,6 +273,11 @@ export const validateMenuItemUpdate = [
     .optional()
     .isBoolean()
     .withMessage('is_available must be a boolean'),
+
+  body('stock_quantity')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('Stock quantity must be a non-negative integer'),
 
   (req, res, next) => {
     const errors = validationResult(req);

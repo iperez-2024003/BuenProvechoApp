@@ -117,13 +117,13 @@ export const validateEventUpdate = [
 
   body('start_time')
     .optional()
-    .matches(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)
-    .withMessage('Start time must be in HH:MM:SS format'),
+    .matches(/^([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?$/)
+    .withMessage('Start time must be in HH:MM or HH:MM:SS format'),
 
   body('end_time')
     .optional()
-    .matches(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/)
-    .withMessage('End time must be in HH:MM:SS format'),
+    .matches(/^([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?$/)
+    .withMessage('End time must be in HH:MM or HH:MM:SS format'),
 
   body('max_participants')
     .optional()

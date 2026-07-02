@@ -51,6 +51,17 @@ export const validateOrderCreation = [
     .isLength({ max: 255 })
     .withMessage('Special instructions cannot exceed 255 characters'),
 
+  body('items.*.notes')
+    .optional()
+    .trim()
+    .isLength({ max: 255 })
+    .withMessage('Notes cannot exceed 255 characters'),
+
+  body('items.*.price')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('Price must be a positive number'),
+
   body('notes')
     .optional()
     .trim()

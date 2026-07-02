@@ -160,3 +160,64 @@ export const validateResetPassword = [
 
   handleValidationErrors,
 ];
+
+export const validateStaffCreation = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('El nombre es obligatorio')
+    .isLength({ max: 25 })
+    .withMessage('El nombre no puede tener más de 25 caracteres'),
+
+  body('surname')
+    .trim()
+    .notEmpty()
+    .withMessage('El apellido es obligatorio')
+    .isLength({ max: 25 })
+    .withMessage('El apellido no puede tener más de 25 caracteres'),
+
+  body('username')
+    .trim()
+    .notEmpty()
+    .withMessage('El nombre de usuario es obligatorio')
+    .isLength({ max: 50 })
+    .withMessage('El nombre de usuario no puede tener más de 50 caracteres'),
+
+  body('email')
+    .trim()
+    .notEmpty()
+    .withMessage('El correo electrónico es obligatorio')
+    .isEmail()
+    .withMessage('El correo electrónico no tiene un formato válido')
+    .isLength({ max: 150 })
+    .withMessage('El correo electrónico no puede tener más de 150 caracteres'),
+
+  body('password')
+    .notEmpty()
+    .withMessage('La contraseña es obligatoria')
+    .isLength({ min: 8, max: 255 })
+    .withMessage('La contraseña debe tener entre 8 y 255 caracteres'),
+
+  body('phone')
+    .notEmpty()
+    .withMessage('El número de teléfono es obligatorio')
+    .matches(/^\d{8}$/)
+    .withMessage('El número de teléfono debe tener exactamente 8 dígitos'),
+
+  body('role')
+    .optional()
+    .isIn(['STAFF_ROLE', 'RESTAURANT_ADMIN_ROLE'])
+    .withMessage('Rol no permitido'),
+
+  handleValidationErrors,
+];
+
+export const validateStaffRoleUpdate = [
+  body('newRole')
+    .notEmpty()
+    .withMessage('El nuevo rol es obligatorio')
+    .isIn(['STAFF_ROLE', 'RESTAURANT_ADMIN_ROLE'])
+    .withMessage('Rol no permitido'),
+
+  handleValidationErrors,
+];

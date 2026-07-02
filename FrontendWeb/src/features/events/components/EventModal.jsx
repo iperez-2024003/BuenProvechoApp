@@ -93,18 +93,21 @@ export const EventModal = ({ isOpen, onClose, onSubmit, creating, initialData = 
     reader.readAsDataURL(file);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     const submitData = { ...form };
 
     if (imageFile) {
-      const formData = new FormData();
-      Object.keys(form).forEach((key) => formData.append(key, form[key]));
-      formData.append('banner', imageFile);
-      onSubmit(formData);
-    } else {
-      onSubmit(submitData);
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(imageFile);
+      });
+      submitData.image_url = base64;
     }
+
+    onSubmit(submitData);
   };
 
   if (!isOpen) return null;
