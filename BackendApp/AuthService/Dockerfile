@@ -10,11 +10,10 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 
-# Inyecta pnpm.onlyBuiltDependencies en package.json usando el
-# propio Node.js (sin instalar jq ni otras herramientas). Es la
-# única forma que pnpm v10 acepta en CI/CD para autorizar scripts
-# de compilación nativa — package.json > .npmrc > env vars.
-RUN node -e "const fs=require('fs');const p=JSON.parse(fs.readFileSync('package.json','utf8'));p.pnpm={onlyBuiltDependencies:['argon2']};fs.writeFileSync('package.json',JSON.stringify(p,null,2))" && \
+# .npmrc con sufijo [] para que pnpm v11 interprete
+# only-built-dependencies como array y autorice el postinstall
+# de argon2 (compilación nativa C++).
+RUN echo 'only-built-dependencies[]=argon2' > .npmrc && \
     pnpm install --prod --no-frozen-lockfile && \
     pnpm store prune
 
