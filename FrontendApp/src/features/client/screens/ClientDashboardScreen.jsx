@@ -86,3 +86,39 @@ const ClientDashboardScreen = ({ navigation }) => {
   };
 
   const vipInfo = getVipLevelInfo(user?.points || 0);
+
+  const renderQuickAction = (action) => (
+    <TouchableOpacity
+      key={action.id}
+      style={styles.quickActionCard}
+      onPress={action.onPress}
+      activeOpacity={0.8}
+    >
+      <Text style={styles.quickActionIcon}>{action.icon}</Text>
+      <View>
+        <Text style={styles.quickActionLabel}>{action.label}</Text>
+        <Text style={styles.quickActionText}>{action.action}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderCategoryButton = (category) => (
+    <TouchableOpacity
+      key={category}
+      style={[
+        styles.categoryButton,
+        activeCategory === category && styles.categoryButtonActive,
+      ]}
+      onPress={() => setActiveCategory(category)}
+      activeOpacity={0.8}
+    >
+      <Text
+        style={[
+          styles.categoryButtonText,
+          activeCategory === category && styles.categoryButtonTextActive,
+        ]}
+      >
+        {category}
+      </Text>
+    </TouchableOpacity>
+  );
