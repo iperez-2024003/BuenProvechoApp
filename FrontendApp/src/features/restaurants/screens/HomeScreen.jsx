@@ -181,3 +181,112 @@ const HomeScreen = ({ navigation }) => {
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: COLORS.background,
+    },
+    scrollView: {
+        flex: 1,
+        padding: SPACING.lg,
+    },
+    header: {
+        marginBottom: SPACING.lg,
+    },
+    headerBadge: {
+        fontSize: FONT_SIZE.xs,
+        fontWeight: '800',
+        color: COLORS.primary,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        marginBottom: SPACING.xs,
+    },
+    headerTitle: {
+        fontSize: FONT_SIZE.huge,
+        fontWeight: '900',
+        color: COLORS.secondary,
+        textTransform: 'uppercase',
+        letterSpacing: -1,
+        lineHeight: 38,
+    },
+    headerTitleAccent: {
+        color: COLORS.primary,
+    },
+    headerSubtitle: {
+        fontSize: FONT_SIZE.sm,
+        fontWeight: '600',
+        color: COLORS.textLight,
+        marginTop: SPACING.xs,
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: COLORS.surface,
+        borderWidth: 2,
+        borderColor: COLORS.border,
+        borderRadius: 16,
+        paddingHorizontal: SPACING.md,
+        marginBottom: SPACING.xl,
+        ...SHADOWS.sm,
+    },
+    searchIcon: {
+        fontSize: 20,
+        marginRight: SPACING.sm,
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: FONT_SIZE.md,
+        fontWeight: '600',
+        color: COLORS.text,
+        paddingVertical: SPACING.md,
+    },
+    listContainer: {
+        minHeight: 400,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: SPACING.xxl * 2,
+        gap: SPACING.md,
+    },
+    loadingText: {
+        fontSize: FONT_SIZE.xs,
+        fontWeight: '900',
+        textTransform: 'uppercase',
+        letterSpacing: 2,
+        color: COLORS.textLight,
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: SPACING.xxl * 2,
+        backgroundColor: COLORS.surface,
+        borderWidth: 2,
+        borderColor: COLORS.border,
+        borderStyle: 'dashed',
+        borderRadius: 16,
+    },
+    emptyIcon: {
+        fontSize: 64,
+        marginBottom: SPACING.md,
+    },
+    emptyTitle: {
+        fontSize: FONT_SIZE.xl,
+        fontWeight: '900',
+        color: COLORS.text,
+        textTransform: 'uppercase',
+        letterSpacing: -0.5,
+        marginBottom: SPACING.xs,
+    },
+    emptyText: {
+        fontSize: FONT_SIZE.sm,
+        fontWeight: '500',
+        color: COLORS.textLight,
+        textAlign: 'center',
+    },
+});
+
+export default HomeScreen;
