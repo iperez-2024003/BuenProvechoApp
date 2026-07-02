@@ -169,3 +169,62 @@ const ClientHistoryScreen = () => {
       </View>
     );
   }
+
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[COLORS.primary]}
+            tintColor={COLORS.primary}
+          />
+        }
+      >
+        {/* Header Premium */}
+        <View style={styles.header}>
+          <Text style={styles.headerBadge}>Pasaporte Gastronómico</Text>
+          <Text style={styles.headerTitle}>
+            Tu <Text style={styles.headerTitleAccent}>Bitácora</Text>
+          </Text>
+          <Text style={styles.headerSubtitle}>
+            Revive tus mejores momentos y gestiona tus experiencias pasadas en la red más exclusiva.
+          </Text>
+        </View>
+
+        {/* Tabs */}
+        <View style={styles.tabsContainer}>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'orders' && styles.tabActive]}
+            onPress={() => setActiveTab('orders')}
+          >
+            <Text style={[styles.tabText, activeTab === 'orders' && styles.tabTextActive]}>
+              Pedidos ({orders.length})
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'reservations' && styles.tabActive]}
+            onPress={() => setActiveTab('reservations')}
+          >
+            <Text style={[styles.tabText, activeTab === 'reservations' && styles.tabTextActive]}>
+              Reservas ({reservations.length})
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {activeTab === 'orders' ? (
+          <>
+            {/* Orders Filters */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filtersScrollContainer}>
+              {['all', 'pending', 'preparing', 'ready', 'served', 'paid', 'cancelled'].map((status) =>
+                renderFilterButton(
+                  status,
+                  orderFilter === status,
+                  status === 'all' ? 'Todos' : STATUS_TRANSLATIONS[status] || status,
+                  () => setOrderFilter(status)
+                )
+              )}
+            </ScrollView>
