@@ -55,3 +55,11 @@ const MainTabNavigator = () => {
         },
       }}
     >
+        <Tab.Screen
+        name="Home"
+        component={ClientDashboardScreen}
+        options={{
+          tabBarLabel: 'Sedes',
+          tabBarIcon: HomeIcon,
+        }}
+      />
