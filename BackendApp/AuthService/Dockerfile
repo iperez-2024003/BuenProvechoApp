@@ -10,10 +10,11 @@ WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 
-# .npmrc con sufijo [] para que pnpm v11 interprete
-# only-built-dependencies como array y autorice el postinstall
-# de argon2 (compilación nativa C++).
-RUN echo 'only-built-dependencies[]=argon2' > .npmrc && \
+# pnpm-workspace.yaml con allowBuilds reemplaza a .npmrc y a
+# package.json#pnpm — pnpm v11 solo lee settings de workspace.
+# Autoriza el postinstall de argon2 (compilación nativa C++).
+RUN echo "allowBuilds:" > pnpm-workspace.yaml && \
+    echo "  argon2: true" >> pnpm-workspace.yaml && \
     pnpm install --prod --no-frozen-lockfile && \
     pnpm store prune
 
