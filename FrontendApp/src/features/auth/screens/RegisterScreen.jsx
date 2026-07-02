@@ -192,3 +192,68 @@ const RegisterScreen = ({ navigation }) => {
             )}
             name="phone"
           />
+          <Controller
+            control={control}
+            rules={{
+              required: 'Requerido',
+              minLength: {
+                value: 8,
+                message: 'Mínimo 8 caracteres',
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Contraseña"
+                placeholder="••••••••"
+                secureTextEntry
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                error={errors.password?.message}
+              />
+            )}
+            name="password"
+          />
+
+          <Controller
+            control={control}
+            rules={{
+              required: 'Requerido',
+              validate: (value) =>
+                value === password || 'Las contraseñas no coinciden',
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Confirmar"
+                placeholder="••••••••"
+                secureTextEntry
+                value={value}
+                onBlur={onBlur}
+                onChangeText={onChange}
+                error={errors.confirmPassword?.message}
+              />
+            )}
+            name="confirmPassword"
+          />
+
+          <Button
+            title="Crear Cuenta"
+            onPress={handleSubmit(onSubmit)}
+            loading={isLoading}
+            style={styles.button}
+          />
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>¿Ya tienes cuenta?</Text>
+            <Button
+              title="Iniciar Sesión"
+              variant="secondary"
+              onPress={() => navigation.navigate('Login')}
+              style={styles.loginButton}
+            />
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+};
