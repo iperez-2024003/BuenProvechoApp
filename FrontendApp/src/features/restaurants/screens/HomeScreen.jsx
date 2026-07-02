@@ -59,4 +59,88 @@ const HomeScreen = ({ navigation }) => {
         return url;
     };
 
+    const renderLoading = () => (
+        <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+            <Text style={styles.loadingText}>Sincronizando Sedes...</Text>
+        </View>
+    );
+
+    const renderEmpty = () => (
+        <View style={styles.emptyContainer}>
+            <Text style={styles.emptyIcon}>🍽️</Text>
+            <Text style={styles.emptyTitle}>Sin Resultados</Text>
+            <Text style={styles.emptyText}>No hay sedes que coincidan con tu búsqueda.</Text>
+        </View>
+    );
+
+    const renderRestaurantCard = (restaurant, index) => (
+        <View key={restaurant.id || index} style={styles.card}>
+            <View style={styles.cardImageContainer}>
+                <Image
+                    source={{ uri: getImageUrl(restaurant.cover_image_url || restaurant.logo_url) }}
+                    style={styles.cardImage}
+                    resizeMode="cover"
+                />
+                <View style={styles.cardImageOverlay} />
+                <View style={styles.verificationBadge}>
+                    <Text style={[
+                        styles.verificationBadgeText,
+                        { backgroundColor: restaurant.is_verified ? COLORS.success : COLORS.warning }
+                    ]}>
+                        {restaurant.is_verified ? 'Verificada' : 'Pendiente'}
+                    </Text>
+                </View>
+            </View>
+
+            <View style={styles.cardContent}>
+                <View style={styles.cardHeader}>
+                    <Text style={styles.restaurantName} numberOfLines={1}>
+                        {restaurant.name}
+                    </Text>
+                    <Text style={styles.priceRange}>{restaurant.price_range}</Text>
+                </View>
+
+                <View style={styles.badgesContainer}>
+                    <Text style={styles.categoryBadge}>
+                        {CATEGORY_LABELS[restaurant.category] || 'Otro'}
+                    </Text>
+                    {restaurant.cuisine_type && (
+                        <Text style={styles.cuisineBadge}>{restaurant.cuisine_type}</Text>
+                    )}
+                </View>
+
+                <View style={styles.infoContainer}>
+                    <View style={styles.infoRow}>
+                        <Text style={styles.infoIcon}>📍</Text>
+                        <Text style={styles.infoText} numberOfLines={1}>
+                            {restaurant.address}
+                        </Text>
+                    </View>
+                    <View style={styles.infoRow}>
+                        <Text style={styles.infoIcon}>🕐</Text>
+                        <Text style={styles.infoText}>
+                            {restaurant.opening_time?.slice(0, 5)} - {restaurant.closing_time?.slice(0, 5)}
+                        </Text>
+                    </View>
+                </View>
+
+                <View style={styles.cardActions}>
+                    <TouchableOpacity
+                        style={[styles.actionButton, styles.secondaryButton]}
+                        onPress={() => navigation.navigate('RestaurantDetail', { id: restaurant.id })}
+                    >
+                        <Text style={styles.secondaryButtonText}>Dashboard</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.actionButton, styles.primaryButton]}
+                        onPress={() => navigation.navigate('RestaurantMenu', { id: restaurant.id })}
+                    >
+                        <Text style={styles.primaryButtonText}>Menú →</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+    );
+
 };
