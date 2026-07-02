@@ -42,3 +42,24 @@ const useRegister = () => {
   };
   return { registerUser, isLoading };
 };
+
+const RegisterScreen = ({ navigation }) => {
+  const { registerUser, isLoading } = useRegister();
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: '',
+      surname: '',
+      username: '',
+      email: '',
+      phone: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
+
+  const password = watch('password');
