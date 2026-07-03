@@ -6,6 +6,8 @@ const AUTH_URL = process.env.EXPO_PUBLIC_AUTH_URL || 'http://192.168.0.7:3006/ap
 const RESTAURANT_URL = process.env.EXPO_PUBLIC_RESTAURANT_URL || 'http://192.168.0.7:3007/api/v1/restaurants';
 const RESTAURANT_SERVICE_URL = process.env.EXPO_PUBLIC_RESTAURANT_URL?.replace('/restaurants', '') || 'http://192.168.0.7:3007/api/v1';
 const ORDER_URL = process.env.EXPO_PUBLIC_ORDER_URL || 'http://192.168.0.7:3008/api/v1/orders';
+const ORDER_SERVICE_URL = ORDER_URL.replace('/orders', '');
+const REPORT_URL = process.env.EXPO_PUBLIC_REPORT_URL || 'http://192.168.0.7:3009/api/v1/stats';
 
 // Base API configuration
 const API_CONFIG = {
@@ -13,6 +15,8 @@ const API_CONFIG = {
   RESTAURANT_URL,
   RESTAURANT_SERVICE_URL,
   ORDER_URL,
+  ORDER_SERVICE_URL,
+  REPORT_URL,
   TIMEOUT: 30000, // 30 seconds timeout for mobile network
   HEADERS: {
     'Content-Type': 'application/json',
