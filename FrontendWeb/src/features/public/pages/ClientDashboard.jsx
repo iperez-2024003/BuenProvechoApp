@@ -16,7 +16,6 @@ import {
 import { useRestaurantStore } from '../../restaurants/store/useRestaurantStore';
 import { useAuthStore } from '../../auth/store/useAuthStore';
 import LogoLoop from '../../../shared/components/ui/LogoLoop';
-import ScrollStack, { ScrollStackItem } from '../../../shared/components/ui/ScrollStack';
 import LogoBuenProvecho from '../../../assets/img/LogoBuenProvecho.png';
 
 const navItems = [
@@ -367,41 +366,36 @@ const FALLBACK_IMAGES = [
           </div>
         </motion.section>
 
-        <ScrollStack useWindowScroll={true} itemStackDistance={30} baseScale={1} rotationAmount={0} blurAmount={0} stackPosition="0">
-
-          <ScrollStackItem itemClassName="bg-transparent shadow-none my-0 p-0 h-auto z-50">
-            <motion.div
-              variants={fadeUpSection}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              className="sticky top-0 z-50 flex items-center gap-2 md:gap-4 overflow-x-auto px-4 py-4 scroll-mt-28 scrollbar-hide md:px-0 bg-[#fffaf3] border-b-2 border-[#1c1712] shadow-[0_8px_0px_#1c1712] flex-nowrap"
- 
-              id="restaurants"
+        <motion.section
+          id="restaurants"
+          variants={fadeUpSection}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          className="mt-6 md:mt-12"
+        >
+          <div className="sticky top-0 z-50 flex items-center gap-2 md:gap-4 overflow-x-auto px-4 py-4 scrollbar-hide md:px-0 bg-[#fffaf3] border-b-2 border-[#1c1712] shadow-[0_8px_0px_#1c1712] flex-nowrap -mx-4 md:-mx-0">
+            {['Todos', ...categories].map((category) => (
+            <button
+              key={category}
+              type="button"
+              onClick={() => setActiveTab(category)}
+              className={`shrink-0 rounded border-2 border-[#1c1712] px-5 md:px-8 py-3 md:py-4 text-[10px] font-black uppercase tracking-widest transition-all duration-300 transform active:translate-y-1 min-h-[44px] ${
+                activeTab === category
+                  ? 'bg-[#1c1712] text-[#fffaf3] shadow-[4px_4px_0px_#b98c52]'
+                  : 'bg-white text-[#1c1712] hover:-translate-y-1 hover:shadow-[4px_4px_0px_#1c1712] active:shadow-none'
+              }`}
             >
-              {['Todos', ...categories].map((category) => (
-              <button
-                key={category}
-                type="button"
-                onClick={() => setActiveTab(category)}
-                className={`shrink-0 rounded border-2 border-[#1c1712] px-5 md:px-8 py-3 md:py-4 text-[10px] font-black uppercase tracking-widest transition-all duration-300 transform active:translate-y-1 min-h-[44px] ${
-                  activeTab === category
-                    ? 'bg-[#1c1712] text-[#fffaf3] shadow-[4px_4px_0px_#b98c52]'
-                    : 'bg-white text-[#1c1712] hover:-translate-y-1 hover:shadow-[4px_4px_0px_#1c1712] active:shadow-none'
-                }`}
-              >
-                {category === 'Todos' ? (
-                  <span className="flex items-center gap-2">
-                    <LayoutGrid className="w-4 h-4" /> Todos
-                  </span>
-                ) : category}
-              </button>
-            ))}
-            </motion.div>
-          </ScrollStackItem>
+              {category === 'Todos' ? (
+                <span className="flex items-center gap-2">
+                  <LayoutGrid className="w-4 h-4" /> Todos
+                </span>
+              ) : category}
+            </button>
+          ))}
+          </div>
 
-
-          <div className="min-h-[300px] md:min-h-[400px]">
+          <div className="min-h-[300px] md:min-h-[400px] mt-6">
             {loading ? (
               <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 md:gap-10">
                 {[1, 2, 3].map((item) => (
@@ -474,7 +468,7 @@ const FALLBACK_IMAGES = [
               </motion.div>
             )}
           </div>
-        </ScrollStack>
+        </motion.section>
       </main>
 
       </div>
