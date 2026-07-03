@@ -64,5 +64,15 @@ export const authService = {
   changePassword: (data) => axiosClient.put(`${API_CONFIG.AUTH_URL}/profile/change-password`, data),
 };
 
+export const restaurantService = {
+  getAll: () => axiosClient.get(`${API_CONFIG.RESTAURANT_URL}`),
+  getById: (id) => axiosClient.get(`${API_CONFIG.RESTAURANT_URL}/${id}`),
+  search: (query) => axiosClient.get(`${API_CONFIG.RESTAURANT_URL}/search`, { params: { q: query } }),
+  getTables: (restaurantId) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/tables`, { params: { restaurant_id: restaurantId } }),
+  createReview: (data) => axiosClient.post(`${API_CONFIG.RESTAURANT_SERVICE_URL}/reviews`, data),
+  getRestaurantReviews: (restaurantId) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/reviews/restaurant/${restaurantId}`),
+};
+
+
 
 export default axiosClient;
