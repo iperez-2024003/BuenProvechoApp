@@ -4,14 +4,56 @@ import { COLORS, SPACING, FONT_SIZE, SHADOWS } from '../../constants/theme';
 
 const Input = ({ label, error, ...props }) => {
   return (
-    <View >
-      {label && <Text>{label}</Text>}
-      <TextInput            
+    <View style={styles.container}>
+      {label && <Text style={styles.label}>{label}</Text>}
+      <TextInput
+        style={[styles.input, error && styles.errorInput]}
+        placeholderTextColor={COLORS.textLight}
         {...props}
       />
-      {error && <Text>{error}</Text>}
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: SPACING.md,
+    width: '100%',
+  },
+  label: {
+    fontSize: FONT_SIZE.sm,
+    fontWeight: '900',
+    color: COLORS.secondary,
+    marginBottom: SPACING.xs,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  input: {
+    backgroundColor: COLORS.surface,
+    borderWidth: 2,
+    borderColor: COLORS.secondary,
+    borderRadius: 12,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text,
+    shadowColor: COLORS.secondary,
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 3,
+  },
+  errorInput: {
+    borderColor: COLORS.error,
+  },
+  errorText: {
+    color: COLORS.error,
+    fontSize: FONT_SIZE.xs,
+    marginTop: SPACING.xs,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+});
 
 export default Input;
