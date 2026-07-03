@@ -162,14 +162,14 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.cardActions}>
         <TouchableOpacity
           style={styles.cardActionBtn}
-          onPress={() => navigation.navigate('RestaurantDetail', { id: restaurant.id })}
+          onPress={() => navigation.navigate('RestaurantDetail', { id: restaurant.id || restaurant._id })}
           activeOpacity={0.7}
         >
           <Text style={styles.cardActionBtnText}>Dashboard</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.cardActionBtn, styles.cardActionBtnPrimary]}
-          onPress={() => navigation.navigate('RestaurantMenu', { id: restaurant.id })}
+          onPress={() => navigation.navigate('RestaurantMenu', { id: restaurant.id || restaurant._id })}
           activeOpacity={0.7}
         >
           <Text style={styles.cardActionBtnTextPrimary}>Ver Menú</Text>
