@@ -55,5 +55,14 @@ axiosClient.interceptors.response.use(
   }
 );
 
+// API service methods for each microservice
+export const authService = {
+  login: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/login`, data),
+  register: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/register`, data),
+  getProfile: () => axiosClient.get(`${API_CONFIG.AUTH_URL}/profile`),
+  updateProfile: (data) => axiosClient.put(`${API_CONFIG.AUTH_URL}/profile`, data),
+  changePassword: (data) => axiosClient.put(`${API_CONFIG.AUTH_URL}/profile/change-password`, data),
+};
+
 
 export default axiosClient;
