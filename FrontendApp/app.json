@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Gestion-Restaurantes",
-    "slug": "Gestion-Restaurantes",
+    "name": "Buen Provecho",
+    "slug": "BuenProvecho",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,18 +10,20 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#fffaf3"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.buenprovecho.app"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#1c1712",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "package": "com.buenprovecho.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,6 +31,11 @@
     "plugins": [
       "@react-native-community/datetimepicker",
       "expo-sharing"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c5fa055e-de93-4101-a13a-59623861830b"
+      }
+    }
   }
 }
