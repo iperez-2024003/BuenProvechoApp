@@ -6,14 +6,17 @@ const Button = ({
   title,
   onPress,
   loading,
+  variant = 'primary',
   style,
   ...props
 }) => {
+  const isSecondary = variant === 'secondary';
 
   return (
     <TouchableOpacity
       style={[
         styles.button,
+        isSecondary ? styles.buttonSecondary : styles.buttonPrimary,
         loading && styles.buttonDisabled,
         style,
       ]}
@@ -24,13 +27,13 @@ const Button = ({
     >
       {loading ? (
         <ActivityIndicator
-          color={COLORS.primary }
+          color={isSecondary ? COLORS.primary : COLORS.surface}
         />
       ) : (
         <Text
           style={[
             styles.text,
-             styles.textPrimary,
+            isSecondary ? styles.textSecondary : styles.textPrimary,
           ]}
         >
           {title}
