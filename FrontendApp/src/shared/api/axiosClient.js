@@ -97,5 +97,8 @@ export const eventService = {
   participate: (eventId, userId) => axiosClient.post(`${API_CONFIG.REPORT_URL.replace('/stats', '')}/events/${eventId}/participants`, { userId }),
 };
 
+export const reportService = {
+  getStats: (restaurantId) => axiosClient.get(`${API_CONFIG.REPORT_URL}/${restaurantId}`),
+};
 
 export default axiosClient;
