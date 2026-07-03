@@ -5,7 +5,7 @@ import { COLORS, SPACING, FONT_SIZE } from '../../constants/theme';
 const StarRating = ({ value, onChange, size = 24, readonly = false }) => {
   return (
     <View style={styles.container}>
-      {[1, 2, 3].map((star) => (
+      {[1, 2, 3, 4, 5].map((star) => (
         <TouchableOpacity
           key={star}
           onPress={() => !readonly && onChange(star)}
