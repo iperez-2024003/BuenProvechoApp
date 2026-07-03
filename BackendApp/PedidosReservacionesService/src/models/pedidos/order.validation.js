@@ -82,7 +82,6 @@ export const validateOrderCreation = [
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('Order Validation Errors:', errors.array());
       return res.status(400).json({
         ok: false,
         message: 'Validation errors',

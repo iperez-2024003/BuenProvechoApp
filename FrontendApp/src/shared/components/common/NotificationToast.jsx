@@ -19,6 +19,9 @@ const NotificationToast = () => {
 
   useEffect(() => {
     if (visible) {
+      opacity.setValue(0);
+      translateY.setValue(-120);
+
       Animated.parallel([
         Animated.timing(opacity, { toValue: 1, duration: 250, useNativeDriver: true }),
         Animated.timing(translateY, { toValue: 0, duration: 300, useNativeDriver: true }),
@@ -33,7 +36,7 @@ const NotificationToast = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [visible]);
+  }, [visible, message, type]);
 
   if (!visible) return null;
 

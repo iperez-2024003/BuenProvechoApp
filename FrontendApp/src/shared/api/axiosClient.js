@@ -63,7 +63,7 @@ export const authService = {
   verifyEmail: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/verify-email`, data),
   resendVerification: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/resend-verification`, data),
   getProfile: () => axiosClient.get(`${API_CONFIG.AUTH_URL}/profile`),
-  getProfileById: (userId) => axiosClient.post(`${API_CONFIG.AUTH_URL}/profile/by-id`, { user_id: userId }),
+  getProfileById: (userId) => axiosClient.post(`${API_CONFIG.AUTH_URL}/profile/by-id`, { userId }),
   updateProfile: (data) => axiosClient.put(`${API_CONFIG.AUTH_URL}/profile`, data),
   changePassword: (data) => axiosClient.put(`${API_CONFIG.AUTH_URL}/profile/change-password`, data),
   deleteAccount: () => axiosClient.delete(`${API_CONFIG.AUTH_URL}/profile`),
@@ -100,7 +100,7 @@ export const reservationService = {
 export const eventService = {
   getAll: (params = {}) => axiosClient.get(`${API_CONFIG.REPORT_URL.replace('/stats', '')}/events`, { params }),
   getAllEvents: () => axiosClient.get(`${API_CONFIG.REPORT_URL.replace('/stats', '')}/events`),
-  participate: (eventId, userId) => axiosClient.post(`${API_CONFIG.REPORT_URL.replace('/stats', '')}/events/${eventId}/participants`, { userId }),
+  participate: (eventId, participantData) => axiosClient.post(`${API_CONFIG.REPORT_URL.replace('/stats', '')}/events/${eventId}/register`, participantData),
 };
 
 export const reportService = {

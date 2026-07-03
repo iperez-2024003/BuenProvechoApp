@@ -123,9 +123,11 @@ const LoginScreen = ({ navigation }) => {
               control={control}
               rules={{
                 required: 'Ingresa tu usuario o correo',
-                pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: 'Formato de correo inválido',
+                validate: (value) => {
+                  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+                  const isUsername = /^[a-zA-Z0-9_]{3,}$/.test(value);
+                  if (!isEmail && !isUsername) return 'Ingresa un correo o usuario válido';
+                  return true;
                 },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
