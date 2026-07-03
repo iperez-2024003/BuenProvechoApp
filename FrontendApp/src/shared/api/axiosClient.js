@@ -73,6 +73,19 @@ export const restaurantService = {
   getRestaurantReviews: (restaurantId) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/reviews/restaurant/${restaurantId}`),
 };
 
+export const menuService = {
+  getAll: (restaurantId) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/menus`, { params: restaurantId ? { restaurant_id: restaurantId } : {} }),
+  getById: (id) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/menus/${id}`),
+  getAllItems: (params = {}) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/menus/items/all`, { params }),
+  getItemById: (id) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/menus/items/${id}`),
+};
+
+export const orderService = {
+  create: (data) => axiosClient.post(`${API_CONFIG.ORDER_URL}`, data),
+  getById: (id) => axiosClient.get(`${API_CONFIG.ORDER_URL}/${id}`),
+  getByUser: (userId) => axiosClient.get(`${API_CONFIG.ORDER_URL}`, { params: { user_id: userId } }),
+};
+
 
 
 export default axiosClient;
