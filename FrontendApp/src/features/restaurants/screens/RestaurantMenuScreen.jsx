@@ -330,11 +330,16 @@ const RestaurantMenuScreen = ({ route }) => {
                               });
                               showNotification('Tu participacion ha sido confirmada.', 'success');
                             } catch (err) {
-                              if (err?.response?.status === 409) {
+                              const status = err?.response?.status;
+                              if (status === 401) {
+                                showNotification('Tu sesión ha expirado. Inicia sesión de nuevo.', 'error');
+                                return;
+                              }
+                              if (status === 409) {
                                 showNotification('Este correo o usuario ya estan registrados en este evento.', 'info');
                                 return;
                               }
-                              if (err?.response?.status === 400) return;
+                              if (status === 400) return;
                               const msg = err?.response?.data?.message || '';
                               showNotification(msg || 'No se pudo completar la inscripcion.', 'error');
                             }

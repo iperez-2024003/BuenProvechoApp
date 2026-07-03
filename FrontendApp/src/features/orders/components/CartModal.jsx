@@ -15,6 +15,7 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as Clipboard from 'expo-clipboard';
 import { COLORS, SPACING, FONT_SIZE, FONTS, SHADOWS } from '../../../shared/constants/theme';
+import { couponsService } from '../../../shared/api/axiosClient';
 import useCartStore from '../store/useCartStore';
 import useAuthStore from '../../profile/store/useAuthStore';
 import useNotificationStore from '../../../shared/stores/useNotificationStore';
@@ -182,7 +183,7 @@ export const CartModal = ({ visible, onClose, restaurantId }) => {
     }
   };
 
-  const handleApplyCoupon = () => {
+  const handleApplyCoupon = async () => {
     const code = couponCode.trim().toUpperCase();
     if (!code) {
       showNotification('Ingresa un codigo de cupon.', 'error');
@@ -192,12 +193,22 @@ export const CartModal = ({ visible, onClose, restaurantId }) => {
       showNotification('Ya tienes un descuento activo.', 'info');
       return;
     }
-    if (/^BP-VIP-\d{4}$/.test(code)) {
-      setCouponDiscount(10);
-      showNotification('Descuento de Q10.00 aplicado a tu orden.', 'success');
-      setCouponCode('');
-    } else {
-      showNotification('El codigo ingresado no es valido.', 'error');
+
+    try {
+      const response = await couponsService.validate({ code });
+      if (response.data?.ok) {
+        const prize = response.data?.coupon?.prize_name || '';
+        const discountMatch = prize.match(/Q?\s*(\d+)/);
+        const discountAmount = discountMatch ? parseInt(discountMatch[1], 10) : 10;
+        setCouponDiscount(discountAmount);
+        showNotification(`Descuento de Q${discountAmount}.00 aplicado a tu orden.`, 'success');
+        setCouponCode('');
+      } else {
+        showNotification(response.data?.message || 'Cupón no valido.', 'error');
+      }
+    } catch (error) {
+      const msg = error.response?.data?.message || 'Cupón no valido, ya utilizado o no encontrado.';
+      showNotification(msg, 'error');
     }
   };
 

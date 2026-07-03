@@ -69,6 +69,7 @@ const useEventsStore = create((set, get) => ({
       set({ loading: false });
       const status = error?.response?.status;
       const msg = error?.response?.data?.message || '';
+      if (status === 401) return { sessionExpired: true, message: 'Tu sesión ha expirado. Inicia sesión de nuevo.' };
       if (status === 409 || status === 400) {
         return {
           alreadyRegistered: status === 409,
@@ -77,7 +78,7 @@ const useEventsStore = create((set, get) => ({
       }
       if (/already registered|ya (esta|estas) inscrito/i.test(msg)) return { alreadyRegistered: true };
       if (/full|capacidad|no spots/i.test(msg)) return { noSpots: true };
-      throw new Error(msg || 'Error al participar en el evento');
+      return { error: msg || 'Error al participar en el evento' };
     }
   },
 }));
