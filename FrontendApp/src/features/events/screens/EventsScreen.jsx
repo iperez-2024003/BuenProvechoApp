@@ -73,23 +73,25 @@ const EventsScreen = ({ navigation }) => {
       return;
     }
 
-    try {
-      const result = await participateInEvent(event.id || event._id, user);
-      if (result?.alreadyRegistered) {
-        showNotification('Ya estas inscrito en este evento.', 'info');
-        return;
-      }
-      if (result?.noSpots) {
-        showNotification('Este evento ya no tiene cupos disponibles.', 'error');
-        return;
-      }
-      showNotification(`Te has registrado correctamente en "${event.name}".`, 'success');
-      onRefresh();
-    } catch (error) {
-      if (error?.response?.status === 409 || error?.response?.status === 400) return;
-      const msg = error.message || '';
-      showNotification(msg || 'No se pudo completar el registro.', 'error');
+    const result = await participateInEvent(event.id || event._id, user);
+    if (result?.sessionExpired) {
+      showNotification(result.message || 'Tu sesión ha expirado. Inicia sesión de nuevo.', 'error');
+      return;
     }
+    if (result?.alreadyRegistered) {
+      showNotification('Ya estas inscrito en este evento.', 'info');
+      return;
+    }
+    if (result?.noSpots) {
+      showNotification('Este evento ya no tiene cupos disponibles.', 'error');
+      return;
+    }
+    if (result?.error) {
+      showNotification(result.error, 'error');
+      return;
+    }
+    showNotification(`Te has registrado correctamente en "${event.name}".`, 'success');
+    onRefresh();
   };
 
   const filteredEvents = activeType === 'all'
