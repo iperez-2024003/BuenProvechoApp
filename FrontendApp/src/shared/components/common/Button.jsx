@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { COLORS, SPACING, FONT_SIZE, SHADOWS } from '../../constants/theme';
+import { COLORS, SPACING, FONT_SIZE, SHADOWS, FONTS } from '../../constants/theme';
 
 const Button = ({
   title,
@@ -53,11 +53,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderWidth: 2,
     borderColor: COLORS.secondary,
-    shadowColor: COLORS.secondary,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    ...SHADOWS.md,
   },
   buttonPrimary: {
     backgroundColor: COLORS.primary,
@@ -71,6 +67,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: FONT_SIZE.md,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },

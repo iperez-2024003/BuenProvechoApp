@@ -6,13 +6,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
-import { COLORS, SPACING, FONT_SIZE } from '../../../shared/constants/theme';
+import { COLORS, SPACING, FONT_SIZE, FONTS, SHADOWS } from '../../../shared/constants/theme';
 import Input from '../../../shared/components/common/Input';
 import Button from '../../../shared/components/common/Button';
 import { authService } from '../../../shared/api/axiosClient';
+import useNotificationStore from '../../../shared/stores/useNotificationStore';
 
 // Hook de registro de usuario conectado al backend real
 const useRegister = () => {
@@ -45,6 +45,7 @@ const useRegister = () => {
 
 const RegisterScreen = ({ navigation }) => {
   const { registerUser, isLoading } = useRegister();
+  const showNotification = useNotificationStore((s) => s.show);
   const {
     control,
     handleSubmit,
@@ -67,13 +68,10 @@ const RegisterScreen = ({ navigation }) => {
   const onSubmit = async (data) => {
     const result = await registerUser(data);
     if (result.success) {
-      Alert.alert(
-        '¡Registro Exitoso!',
-        'Cuenta creada. Por favor, verifica tu correo antes de iniciar sesión.',
-        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
-      );
+      showNotification('¡Cuenta creada! Por favor, verifica tu correo antes de iniciar sesión', 'success');
+      navigation.navigate('Login');
     } else {
-      Alert.alert('Error', result.error || 'No se pudo completar el registro');
+      showNotification(result.error || 'Servicio temporalmente no disponible, intenta más tarde', 'error');
     }
   };
 
@@ -277,11 +275,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.secondary,
     // Neo-brutalismo consistente con Login
-    shadowColor: COLORS.secondary,
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    ...SHADOWS.lg,
     marginVertical: SPACING.md,
   },
   header: {
@@ -291,6 +285,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FONT_SIZE.xxl,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
     letterSpacing: -1,
@@ -301,6 +296,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: FONT_SIZE.xs,
     fontWeight: '800',
+    fontFamily: FONTS.bold,
     textTransform: 'uppercase',
     letterSpacing: 2,
     color: COLORS.textLight,
@@ -330,6 +326,7 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: FONT_SIZE.xs,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     textTransform: 'uppercase',
     color: COLORS.textLight,
   },

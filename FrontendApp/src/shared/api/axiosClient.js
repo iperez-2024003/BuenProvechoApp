@@ -40,15 +40,14 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle common errors
     if (error.response) {
-      // Server responded with error status
-      console.error('API Error:', error.response.status, error.response.data);
+      const status = error.response.status;
+      if (status !== 409 && status !== 400) {
+        console.error('API Error:', status, error.response.data);
+      }
     } else if (error.request) {
-      // Request made but no response received
       console.error('Network Error:', error.message);
     } else {
-      // Error in request configuration
       console.error('Request Error:', error.message);
     }
     return Promise.reject(error);
@@ -59,15 +58,21 @@ axiosClient.interceptors.response.use(
 export const authService = {
   login: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/login`, data),
   register: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/register`, data),
+  forgotPassword: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/forgot-password`, data),
+  resetPassword: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/reset-password`, data),
+  verifyEmail: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/verify-email`, data),
+  resendVerification: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/resend-verification`, data),
   getProfile: () => axiosClient.get(`${API_CONFIG.AUTH_URL}/profile`),
+  getProfileById: (userId) => axiosClient.post(`${API_CONFIG.AUTH_URL}/profile/by-id`, { user_id: userId }),
   updateProfile: (data) => axiosClient.put(`${API_CONFIG.AUTH_URL}/profile`, data),
   changePassword: (data) => axiosClient.put(`${API_CONFIG.AUTH_URL}/profile/change-password`, data),
+  deleteAccount: () => axiosClient.delete(`${API_CONFIG.AUTH_URL}/profile`),
+  addPoints: (data) => axiosClient.post(`${API_CONFIG.AUTH_URL}/profile/add-points`, data),
 };
 
 export const restaurantService = {
   getAll: () => axiosClient.get(`${API_CONFIG.RESTAURANT_URL}`),
   getById: (id) => axiosClient.get(`${API_CONFIG.RESTAURANT_URL}/${id}`),
-  search: (query) => axiosClient.get(`${API_CONFIG.RESTAURANT_URL}/search`, { params: { q: query } }),
   getTables: (restaurantId) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/tables`, { params: { restaurant_id: restaurantId } }),
   createReview: (data) => axiosClient.post(`${API_CONFIG.RESTAURANT_SERVICE_URL}/reviews`, data),
   getRestaurantReviews: (restaurantId) => axiosClient.get(`${API_CONFIG.RESTAURANT_SERVICE_URL}/reviews/restaurant/${restaurantId}`),
@@ -94,11 +99,22 @@ export const reservationService = {
 
 export const eventService = {
   getAll: (params = {}) => axiosClient.get(`${API_CONFIG.REPORT_URL.replace('/stats', '')}/events`, { params }),
+  getAllEvents: () => axiosClient.get(`${API_CONFIG.REPORT_URL.replace('/stats', '')}/events`),
   participate: (eventId, userId) => axiosClient.post(`${API_CONFIG.REPORT_URL.replace('/stats', '')}/events/${eventId}/participants`, { userId }),
 };
 
 export const reportService = {
   getStats: (restaurantId) => axiosClient.get(`${API_CONFIG.REPORT_URL}/${restaurantId}`),
+};
+
+export const pointsService = {
+  getHistory: () => axiosClient.get(`${API_CONFIG.LOYALTY_URL}/points/history`),
+  redeem: (data) => axiosClient.post(`${API_CONFIG.LOYALTY_URL}/points/redeem`, data),
+};
+
+export const couponsService = {
+  getActive: () => axiosClient.get(`${API_CONFIG.LOYALTY_URL}/coupons/active`),
+  validate: (data) => axiosClient.post(`${API_CONFIG.LOYALTY_URL}/coupons/validate`, data),
 };
 
 export default axiosClient;

@@ -9,12 +9,15 @@ import {
   TextInput,
   ActivityIndicator,
   RefreshControl,
-  Alert,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { COLORS, SPACING, FONT_SIZE } from '../../../shared/constants/theme';
+import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
+import { COLORS, SPACING, FONT_SIZE, FONTS, SHADOWS } from '../../../shared/constants/theme';
 import StarRating from '../../../shared/components/common/StarRating';
 import { orderService, reservationService, restaurantService } from '../../../shared/api/axiosClient';
+import useNotificationStore from '../../../shared/stores/useNotificationStore';
 
 const STATUS_CLASSES = {
   pending: { bg: '#fffaf3', text: COLORS.warning, border: COLORS.secondary },
@@ -44,11 +47,12 @@ const ClientHistoryScreen = () => {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  
+  const showNotification = useNotificationStore((s) => s.show);
+
   const [activeTab, setActiveTab] = useState('orders');
   const [orderFilter, setOrderFilter] = useState('all');
   const [reservationFilter, setReservationFilter] = useState('all');
-  
+
   const [reviewModal, setReviewModal] = useState({ open: false, order: null });
   const [ticketOrder, setTicketOrder] = useState(null);
   const [rating, setRating] = useState(5);
@@ -61,7 +65,7 @@ const ClientHistoryScreen = () => {
         orderService.getByUser(userId),
         reservationService.getByUser(userId),
       ]);
-      
+
       setOrders(ordersRes.data?.data || ordersRes.data || []);
       setReservations(reservationsRes.data?.data || reservationsRes.data || []);
     } catch (error) {
@@ -103,8 +107,8 @@ const ClientHistoryScreen = () => {
 
   const completedOrders = orders.filter((order) => ['served', 'paid'].includes(order.status));
 
-  const filteredOrders = orderFilter === 'all' 
-    ? orders 
+  const filteredOrders = orderFilter === 'all'
+    ? orders
     : orders.filter((order) => order.status === orderFilter);
 
   const filteredReservations = reservationFilter === 'all'
@@ -114,11 +118,83 @@ const ClientHistoryScreen = () => {
   const handleDownloadTicket = (orderId) => {
     const order = orders.find((item) => (item.id || item._id) === orderId);
     if (!order) {
-      Alert.alert('Ticket', 'No se encontró la orden seleccionada.');
+      showNotification('No se encontro la orden seleccionada.', 'error');
       return;
     }
-
     setTicketOrder(order);
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!ticketOrder) return;
+    try {
+      const items = ticketOrder.items || [];
+      const html = `
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: 'Courier New', monospace; background: #fff; padding: 24px; }
+            .header { text-align: center; border-bottom: 4px double #000; padding-bottom: 16px; margin-bottom: 20px; }
+            .header h1 { font-size: 24px; text-transform: uppercase; letter-spacing: 2px; }
+            .header p { font-size: 12px; color: #555; margin-top: 4px; }
+            .order-info { margin-bottom: 20px; }
+            .order-info .row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 1px dashed #ccc; }
+            .items { margin-bottom: 20px; }
+            .items h3 { font-size: 14px; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 8px; }
+            .item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px dashed #eee; }
+            .item .name { flex: 1; }
+            .item .qty { margin: 0 12px; color: #666; }
+            .item .price { font-weight: bold; }
+            .total-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; border-top: 3px solid #000; padding-top: 12px; margin-top: 8px; }
+            .footer { text-align: center; margin-top: 32px; font-size: 11px; color: #888; border-top: 2px solid #000; padding-top: 16px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Buen Provecho</h1>
+            <p>Comprobante de Pedido</p>
+          </div>
+          <div class="order-info">
+            <div class="row"><span>No. Orden</span><span>#${(ticketOrder.order_number || ticketOrder.id || 'N/A').toString().split('-').pop()}</span></div>
+            <div class="row"><span>Estado</span><span>${ticketOrder.status || 'Confirmado'}</span></div>
+            <div class="row"><span>Restaurante</span><span>${ticketOrder.restaurant?.name || ticketOrder.restaurant_name || 'Sede Premium'}</span></div>
+            <div class="row"><span>Fecha</span><span>${ticketOrder.createdAt ? new Date(ticketOrder.createdAt).toLocaleDateString('es-GT', { day: '2-digit', month: 'long', year: 'numeric' }) : 'Reciente'}</span></div>
+          </div>
+          <div class="items">
+            <h3>Platillos</h3>
+            ${items.map(item => `
+              <div class="item">
+                <span class="name">${item.MenuItem?.name || item.name || 'Platillo'}</span>
+                <span class="qty">x${item.quantity}</span>
+                <span class="price">Q${Number(item.price || item.unit_price).toFixed(2)}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="total-row">
+            <span>Total</span>
+            <span>Q${Number(ticketOrder.total || 0).toFixed(2)}</span>
+          </div>
+          <div class="footer">
+            <p>Gracias por tu preferencia</p>
+            <p>Buen Provecho - Red de Sabores</p>
+          </div>
+        </body>
+      </html>`;
+      const { uri } = await Print.printToFileAsync({ html });
+      const isSharingAvailable = await Sharing.isAvailableAsync();
+      if (isSharingAvailable) {
+        await Sharing.shareAsync(uri, {
+          mimeType: 'application/pdf',
+          dialogTitle: 'Compartir Ticket',
+          UTI: 'com.adobe.pdf',
+        });
+      } else {
+        showNotification(`PDF guardado en: ${uri}`, 'success');
+      }
+    } catch (error) {
+      showNotification('No se pudo generar el ticket PDF.', 'error');
+    }
   };
 
   const submitReview = async () => {
@@ -132,16 +208,16 @@ const ClientHistoryScreen = () => {
         rating,
         comment: comment.trim(),
       };
-      
+
       await restaurantService.createReview(reviewPayload);
-      Alert.alert('Éxito', '¡Gracias por compartir tu opinión gourmet!');
+      showNotification('¡Gracias por compartir tu opinion gourmet!', 'success');
       setReviewedOrders((prev) => [...prev, reviewModal.order.id || reviewModal.order._id]);
       setReviewModal({ open: false, order: null });
       setRating(5);
       setComment('');
     } catch (error) {
-      const msg = error.response?.data?.message || error.message || 'Error al enviar la reseña';
-      Alert.alert('Error', msg);
+      const msg = error.response?.data?.message || error.message || 'Error al enviar la resena';
+      showNotification(msg, 'error');
     } finally {
       setLoading(false);
     }
@@ -166,7 +242,7 @@ const ClientHistoryScreen = () => {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.loadingText}>Cargando Bitácora...</Text>
+        <Text style={styles.loadingText}>Cargando Bitacora...</Text>
       </View>
     );
   }
@@ -187,12 +263,12 @@ const ClientHistoryScreen = () => {
       >
         {/* Header Premium */}
         <View style={styles.header}>
-          <Text style={styles.headerBadge}>Pasaporte Gastronómico</Text>
+          <Text style={styles.headerBadge}>Pasaporte Gastronomico</Text>
           <Text style={styles.headerTitle}>
-            Tu <Text style={styles.headerTitleAccent}>Bitácora</Text>
+            Tu <Text style={styles.headerTitleAccent}>Bitacora</Text>
           </Text>
           <Text style={styles.headerSubtitle}>
-            Revive tus mejores momentos y gestiona tus experiencias pasadas en la red más exclusiva.
+            Revive tus mejores momentos y gestiona tus experiencias pasadas en la red mas exclusiva.
           </Text>
         </View>
 
@@ -261,7 +337,10 @@ const ClientHistoryScreen = () => {
                       <View style={styles.cardFooterLeft}>
                         <Text style={styles.totalText}>Q{Number(order.total).toFixed(2)}</Text>
                         <TouchableOpacity style={styles.ticketButton} onPress={() => handleDownloadTicket(orderId)}>
-                          <Text style={styles.ticketButtonText}>📄 Ver Ticket</Text>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                            <Ionicons name="receipt-outline" size={14} color={COLORS.secondary} />
+                            <Text style={styles.ticketButtonText}>Ver Ticket</Text>
+                          </View>
                         </TouchableOpacity>
                       </View>
                       <Text style={styles.dateText}>
@@ -273,8 +352,8 @@ const ClientHistoryScreen = () => {
               })}
               {filteredOrders.length === 0 && (
                 <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyIcon}>📦</Text>
-                  <Text style={styles.emptyTitle}>Sin órdenes registradas</Text>
+                  <Ionicons name="cube-outline" size={40} color={COLORS.secondary} />
+                  <Text style={styles.emptyTitle}>Sin ordenes registradas</Text>
                 </View>
               )}
             </View>
@@ -308,9 +387,12 @@ const ClientHistoryScreen = () => {
                         onPress={() => !isReviewed && setReviewModal({ open: true, order })}
                         disabled={isReviewed}
                       >
-                        <Text style={styles.reviewButtonText}>
-                          {isReviewed ? 'Opinión Registrada' : '💬 Dejar Reseña'}
-                        </Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+                          <Ionicons name="chatbubble-ellipses-outline" size={14} color="#FFFFFF" />
+                          <Text style={styles.reviewButtonText}>
+                            {isReviewed ? 'Opinion Registrada' : 'Dejar Resena'}
+                          </Text>
+                        </View>
                       </TouchableOpacity>
                     </View>
                   );
@@ -367,7 +449,7 @@ const ClientHistoryScreen = () => {
                     <View style={styles.cardFooter}>
                       <View style={styles.reservationInfo}>
                         <Text style={styles.reservationInfoText}>
-                          ⚡ {res.reservation_date} | {res.reservation_time?.slice(0, 5)}
+                          {res.reservation_date} | {res.reservation_time?.slice(0, 5)}
                         </Text>
                       </View>
                       <View style={styles.partySizeBadge}>
@@ -379,7 +461,7 @@ const ClientHistoryScreen = () => {
               })}
               {filteredReservations.length === 0 && (
                 <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyIcon}>📅</Text>
+                  <Ionicons name="calendar-outline" size={40} color={COLORS.secondary} />
                   <Text style={styles.emptyTitle}>Sin reservas registradas</Text>
                 </View>
               )}
@@ -396,13 +478,13 @@ const ClientHistoryScreen = () => {
               style={styles.modalClose}
               onPress={() => setReviewModal({ open: false, order: null })}
             >
-              <Text style={styles.modalCloseText}>✕</Text>
+              <Ionicons name="close" size={20} color={COLORS.secondary} />
             </TouchableOpacity>
 
             <View style={styles.modalHeader}>
               <Text style={styles.modalBadge}>Club Gourmet</Text>
               <Text style={styles.modalTitle}>Calificar Sabor</Text>
-              <Text style={styles.modalSubtitle}>Tu opinión es la brújula de nuestra excelencia.</Text>
+              <Text style={styles.modalSubtitle}>Tu opinion es la brujula de nuestra excelencia.</Text>
             </View>
 
             <View style={styles.modalBody}>
@@ -432,7 +514,10 @@ const ClientHistoryScreen = () => {
                 <Text style={styles.modalCancelButtonText}>Omitir</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.modalSubmitButton} onPress={submitReview}>
-                <Text style={styles.modalSubmitButtonText}>Enviar Reseña ✨</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={styles.modalSubmitButtonText}>Enviar Resena</Text>
+                  <Ionicons name="paper-plane-outline" size={14} color="#FFFFFF" />
+                </View>
               </TouchableOpacity>
             </View>
           </View>
@@ -447,7 +532,7 @@ const ClientHistoryScreen = () => {
               style={styles.modalClose}
               onPress={() => setTicketOrder(null)}
             >
-              <Text style={styles.modalCloseText}>✕</Text>
+              <Ionicons name="close" size={20} color={COLORS.secondary} />
             </TouchableOpacity>
 
             <View style={styles.modalHeader}>
@@ -483,9 +568,20 @@ const ClientHistoryScreen = () => {
               </View>
             </ScrollView>
 
-            <TouchableOpacity style={styles.modalSubmitButton} onPress={() => setTicketOrder(null)}>
-              <Text style={styles.modalSubmitButtonText}>Cerrar Ticket</Text>
-            </TouchableOpacity>
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.modalCancelButton}
+                onPress={() => setTicketOrder(null)}
+              >
+                <Text style={styles.modalCancelButtonText}>Cerrar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.modalSubmitButton} onPress={handleDownloadPdf}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Ionicons name="receipt-outline" size={14} color="#FFFFFF" />
+                  <Text style={styles.modalSubmitButtonText}>Descargar PDF</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -511,6 +607,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: FONT_SIZE.xs,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     textTransform: 'uppercase',
     letterSpacing: 2,
     color: COLORS.textLight,
@@ -526,6 +623,7 @@ const styles = StyleSheet.create({
   headerBadge: {
     fontSize: 9,
     fontWeight: '950',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -540,6 +638,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: FONT_SIZE.xl,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
     letterSpacing: -1,
@@ -550,6 +649,7 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 11,
     fontWeight: '600',
+    fontFamily: FONTS.bold,
     color: COLORS.secondary,
     marginTop: SPACING.xxs,
   },
@@ -570,6 +670,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: FONT_SIZE.xs,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.textLight,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -588,7 +689,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderWidth: 2,
     borderColor: COLORS.secondary,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   filterButtonActive: {
     backgroundColor: COLORS.secondary,
@@ -596,6 +697,7 @@ const styles = StyleSheet.create({
   filterButtonText: {
     fontSize: 10,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
@@ -612,6 +714,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: FONT_SIZE.md,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
@@ -626,11 +729,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: SPACING.md,
     padding: SPACING.md,
-    shadowColor: COLORS.secondary,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    ...SHADOWS.md,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -641,6 +740,7 @@ const styles = StyleSheet.create({
   cardLabel: {
     fontSize: 9,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.primaryDark,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -649,11 +749,13 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: FONT_SIZE.md,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
   },
   cardSub: {
     fontSize: 11,
     fontWeight: '600',
+    fontFamily: FONTS.bold,
     color: COLORS.textLight,
     marginTop: 2,
   },
@@ -666,6 +768,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 10,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     textTransform: 'uppercase',
   },
   cardFooter: {
@@ -684,11 +787,12 @@ const styles = StyleSheet.create({
   totalText: {
     fontSize: FONT_SIZE.md,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
   },
   ticketButton: {
-    backgroundColor: COLORS.background,
-    borderWidth: 1.5,
+    backgroundColor: COLORS.surface,
+    borderWidth: 2,
     borderColor: COLORS.secondary,
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xxs,
@@ -697,12 +801,14 @@ const styles = StyleSheet.create({
   ticketButtonText: {
     fontSize: 10,
     fontWeight: '800',
+    fontFamily: FONTS.bold,
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
   dateText: {
     fontSize: 11,
     fontWeight: '800',
+    fontFamily: FONTS.bold,
     color: COLORS.textMuted,
   },
   reservationInfo: {
@@ -711,6 +817,7 @@ const styles = StyleSheet.create({
   reservationInfoText: {
     fontSize: 11,
     fontWeight: '800',
+    fontFamily: FONTS.bold,
     color: COLORS.secondary,
   },
   partySizeBadge: {
@@ -724,6 +831,7 @@ const styles = StyleSheet.create({
   partySizeText: {
     fontSize: 10,
     fontWeight: '850',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
@@ -736,20 +844,19 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  emptyIcon: {
-    fontSize: 40,
-    marginBottom: SPACING.xs,
+    gap: SPACING.sm,
   },
   emptyTitle: {
     fontSize: FONT_SIZE.sm,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
   emptyText: {
     fontSize: 11,
     fontWeight: '600',
+    fontFamily: FONTS.bold,
     color: COLORS.textLight,
     textAlign: 'center',
     paddingVertical: SPACING.xs,
@@ -763,11 +870,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.secondary,
     borderRadius: 12,
     padding: SPACING.md,
-    shadowColor: COLORS.secondary,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    ...SHADOWS.md,
   },
   reviewCardHeader: {
     flexDirection: 'row',
@@ -786,6 +889,7 @@ const styles = StyleSheet.create({
   reviewBadgeText: {
     fontSize: 8,
     fontWeight: '850',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
@@ -796,11 +900,13 @@ const styles = StyleSheet.create({
   reviewOrderNumber: {
     fontSize: FONT_SIZE.md,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
   },
   reviewTotal: {
     fontSize: 11,
     fontWeight: '800',
+    fontFamily: FONTS.bold,
     color: COLORS.primaryDark,
     marginBottom: SPACING.sm,
   },
@@ -809,13 +915,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.secondary,
     paddingVertical: SPACING.sm,
-    borderRadius: 8,
+    borderRadius: 12,
     alignItems: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 2,
+    ...SHADOWS.md,
   },
   reviewButtonDisabled: {
     backgroundColor: COLORS.textMuted,
@@ -826,6 +928,7 @@ const styles = StyleSheet.create({
   reviewButtonText: {
     fontSize: 10,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.surface,
     textTransform: 'uppercase',
   },
@@ -837,26 +940,17 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
   },
   modalContent: {
-    backgroundColor: COLORS.background,
-    borderRadius: 20,
+    backgroundColor: COLORS.surface,
+    borderRadius: 12,
     padding: SPACING.md,
     width: '100%',
-    borderWidth: 4,
+    borderWidth: 2,
     borderColor: COLORS.secondary,
-    shadowColor: COLORS.secondary,
-    shadowOffset: { width: 6, height: 6 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 6,
+    ...SHADOWS.md,
   },
   modalClose: {
     alignSelf: 'flex-end',
     padding: SPACING.xs,
-  },
-  modalCloseText: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: COLORS.secondary,
   },
   modalHeader: {
     marginBottom: SPACING.md,
@@ -865,6 +959,7 @@ const styles = StyleSheet.create({
   modalBadge: {
     fontSize: 9,
     fontWeight: '950',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
     backgroundColor: COLORS.primary,
@@ -878,6 +973,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: FONT_SIZE.lg,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
@@ -900,6 +996,7 @@ const styles = StyleSheet.create({
   commentLabel: {
     fontSize: 10,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
@@ -907,7 +1004,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderWidth: 2,
     borderColor: COLORS.secondary,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
     fontSize: FONT_SIZE.sm,
@@ -920,7 +1017,7 @@ const styles = StyleSheet.create({
   },
   modalCancelButton: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.surface,
     borderWidth: 2,
     borderColor: COLORS.secondary,
     paddingVertical: SPACING.md,
@@ -930,7 +1027,8 @@ const styles = StyleSheet.create({
   modalCancelButtonText: {
     fontSize: 11,
     fontWeight: '900',
-    color: COLORS.textLight,
+    fontFamily: FONTS.black,
+    color: COLORS.secondary,
     textTransform: 'uppercase',
   },
   modalSubmitButton: {
@@ -941,15 +1039,12 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     borderRadius: 12,
     alignItems: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 3,
+    ...SHADOWS.md,
   },
   modalSubmitButtonText: {
     fontSize: 11,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.surface,
     textTransform: 'uppercase',
   },
@@ -960,29 +1055,32 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderWidth: 2,
     borderColor: COLORS.secondary,
-    borderRadius: 10,
+    borderRadius: 12,
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.sm,
   },
   ticketSummaryLabel: {
     fontSize: 10,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.textLight,
     textTransform: 'uppercase',
   },
   ticketSummaryValue: {
     fontSize: 11,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
   },
   ticketSummaryTotal: {
     fontSize: FONT_SIZE.md,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.primaryDark,
   },
   ticketItemsBox: {
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.surface,
     borderWidth: 2,
     borderColor: COLORS.secondary,
     borderRadius: 12,
@@ -998,12 +1096,14 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 11,
     fontWeight: '700',
+    fontFamily: FONTS.bold,
     color: COLORS.secondary,
     paddingRight: SPACING.sm,
   },
   ticketItemQty: {
     fontSize: 11,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.primaryDark,
   },
 });

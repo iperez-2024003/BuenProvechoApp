@@ -6,17 +6,17 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
   Image,
   TouchableOpacity,
   Animated,
   TextInput,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useForm, Controller } from 'react-hook-form';
-import { COLORS, SPACING, FONT_SIZE } from '../../../shared/constants/theme';
+import { COLORS, SPACING, FONT_SIZE, FONTS, SHADOWS } from '../../../shared/constants/theme';
 import Button from '../../../shared/components/common/Button';
-import { authService } from '../../../shared/api/axiosClient';
+import useAuthStore from '../../profile/store/useAuthStore';
+import useNotificationStore from '../../../shared/stores/useNotificationStore';
+import { isUnverifiedAccount } from '../../../shared/utils/apiErrors';
 
 const uploadImages = [
   require('../../../../assets/img/Restaurante1.webp'),
@@ -24,45 +24,9 @@ const uploadImages = [
   require('../../../../assets/img/Restaurante3.webp'),
 ];
 
-// Hook de autenticación conectado a la API real
-const useAuth = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const login = async (email, password) => {
-    setIsLoading(true);
-    try {
-      const response = await authService.login({ email, password });
-      const { token, userDetails } = response.data;
-      
-      // Guardar token en AsyncStorage
-      await AsyncStorage.setItem('authToken', token);
-      
-      // Validar estrictamente antes de guardar userData
-      const dataToSave = userDetails || response.data.user || response.data.userData || response.data;
-      if (dataToSave) {
-        await AsyncStorage.setItem('userData', JSON.stringify(dataToSave));
-      }
-      
-      return { success: true, user: dataToSave };
-    } catch (error) {
-      setIsLoading(false);
-      if (error.response) {
-        const { status, data } = error.response;
-        if (status === 401) {
-          return { success: false, code: 'INVALID_CREDENTIALS', error: data.message || 'Credenciales inválidas' };
-        } else if (status === 404) {
-          return { success: false, code: 'USER_NOT_FOUND', error: data.message || 'Usuario no encontrado' };
-        }
-      }
-      return { success: false, error: error.message || 'Error al conectar con el servidor' };
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  return { login, isLoading };
-};
-
 const LoginScreen = ({ navigation }) => {
-  const { login, isLoading } = useAuth();
+  const { login, isLoading } = useAuthStore();
+  const showNotification = useNotificationStore((s) => s.show);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -104,17 +68,20 @@ const LoginScreen = ({ navigation }) => {
   const onSubmit = async (data) => {
     const result = await login(data.email, data.password);
     if (result.success) {
-      Alert.alert('Éxito', '¡Bienvenido de nuevo al panel gastronómico!');
+      showNotification('Inicio de sesión exitoso', 'success');
       navigation.reset({
         index: 0,
         routes: [{ name: 'MainTabs' }],
       });
+    } else if (result.originalError && isUnverifiedAccount(result.originalError)) {
+      showNotification(
+        'Cuenta no verificada. Por favor, revisa tu bandeja de entrada o carpeta de spam para verificar tu cuenta',
+        'info'
+      );
+    } else if (result.code === 'USER_NOT_FOUND' || result.code === 'INVALID_PASSWORD') {
+      setError('email', { type: 'manual', message: 'Usuario o contraseña incorrectos' });
     } else {
-      if (result.code === 'USER_NOT_FOUND' || result.code === 'INVALID_CREDENTIALS') {
-        setError('email', { type: 'manual', message: result.error });
-      } else {
-        Alert.alert('Error', result.error || 'Ocurrió un error inesperado');
-      }
+      showNotification(result.error || 'Servicio temporalmente no disponible, intenta más tarde', 'error');
     }
   };
 
@@ -219,12 +186,7 @@ const LoginScreen = ({ navigation }) => {
           {/* Forgot Password Link */}
           <TouchableOpacity
             style={styles.forgotPasswordLink}
-            onPress={() =>
-              Alert.alert(
-                'Recuperar Acceso',
-                'Por favor, ponte en contacto con el administrador del sistema para restablecer tus credenciales.'
-              )
-            }
+            onPress={() => navigation.navigate('ForgotPassword')}
             activeOpacity={0.7}
           >
             <Text style={styles.forgotPasswordText}>¿Olvidaste tu acceso?</Text>
@@ -298,11 +260,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 4,
     borderColor: COLORS.secondary,
-    shadowColor: COLORS.secondary,
-    shadowOffset: { width: 8, height: 8 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 8,
+    ...SHADOWS.xl,
   },
   header: {
     alignItems: 'center',
@@ -316,6 +274,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: FONT_SIZE.xxl,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     textTransform: 'uppercase',
     letterSpacing: -1,
@@ -326,6 +285,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 10,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     textTransform: 'uppercase',
     letterSpacing: 2,
     color: COLORS.textLight,
@@ -338,6 +298,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: FONT_SIZE.xs,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.secondary,
     marginBottom: SPACING.xs,
     textTransform: 'uppercase',
@@ -352,11 +313,7 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.sm,
     fontSize: FONT_SIZE.md,
     color: COLORS.text,
-    shadowColor: COLORS.secondary,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    ...SHADOWS.md,
   },
   passwordWrapper: {
     flexDirection: 'row',
@@ -366,11 +323,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.secondary,
     borderRadius: 12,
     paddingRight: SPACING.sm,
-    shadowColor: COLORS.secondary,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    ...SHADOWS.md,
   },
   passwordInput: {
     flex: 1,
@@ -390,6 +343,7 @@ const styles = StyleSheet.create({
   eyeButtonText: {
     fontSize: 10,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.background,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -402,6 +356,7 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.xs,
     marginTop: SPACING.xs,
     fontWeight: '800',
+    fontFamily: FONTS.bold,
     textTransform: 'uppercase',
   },
   forgotPasswordLink: {
@@ -411,6 +366,7 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     fontSize: 9,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     color: COLORS.primaryDark,
     textTransform: 'uppercase',
     letterSpacing: 1,
@@ -419,11 +375,7 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xs,
     borderWidth: 2,
     borderColor: COLORS.secondary,
-    shadowColor: COLORS.secondary,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    ...SHADOWS.md,
   },
   footer: {
     marginTop: SPACING.lg,
@@ -436,6 +388,7 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: FONT_SIZE.xs,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     textTransform: 'uppercase',
     color: COLORS.textLight,
   },
@@ -447,15 +400,12 @@ const styles = StyleSheet.create({
     borderColor: COLORS.secondary,
     backgroundColor: COLORS.surface,
     borderRadius: 12,
-    shadowColor: COLORS.primaryDark,
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    ...SHADOWS.md,
   },
   registerButtonText: {
     fontSize: 10,
     fontWeight: '900',
+    fontFamily: FONTS.black,
     textTransform: 'uppercase',
     letterSpacing: 1,
     color: COLORS.secondary,

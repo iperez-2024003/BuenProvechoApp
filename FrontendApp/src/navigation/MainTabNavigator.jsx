@@ -1,36 +1,27 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text } from 'react-native';
-import { COLORS, SPACING, FONT_SIZE } from '../shared/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, SPACING, FONT_SIZE, FONTS } from '../shared/constants/theme';
 import ClientDashboardScreen from '../features/client/screens/ClientDashboardScreen';
-import EventsScreen from '../features/events/screens/EventsScreen';
-import OrdersScreen from '../features/orders/screens/OrdersScreen';
+import ClientHistoryScreen from '../features/client/screens/ClientHistoryScreen';
 import ProfileScreen from '../features/profile/screens/ProfileScreen';
-
+import EventsScreen from '../features/events/screens/EventsScreen';
 const Tab = createBottomTabNavigator();
 
 const HomeIcon = ({ focused }) => (
-  <View style={{ alignItems: 'center' }}>
-    <Text style={{ fontSize: 24 }}>{focused ? '🏠' : '🏠'}</Text>
-  </View>
-);
-
-const EventsIcon = ({ focused }) => (
-  <View style={{ alignItems: 'center' }}>
-    <Text style={{ fontSize: 24 }}>{focused ? '🎉' : '🎉'}</Text>
-  </View>
+  <Ionicons name={focused ? 'business' : 'business-outline'} size={22} color={COLORS.secondary} />
 );
 
 const OrdersIcon = ({ focused }) => (
-  <View style={{ alignItems: 'center' }}>
-    <Text style={{ fontSize: 24 }}>{focused ? '📦' : '📦'}</Text>
-  </View>
+  <Ionicons name={focused ? 'receipt' : 'receipt-outline'} size={22} color={COLORS.secondary} />
+);
+
+const EventsIcon = ({ focused }) => (
+  <Ionicons name={focused ? 'calendar' : 'calendar-outline'} size={22} color={COLORS.secondary} />
 );
 
 const ProfileIcon = ({ focused }) => (
-  <View style={{ alignItems: 'center' }}>
-    <Text style={{ fontSize: 24 }}>{focused ? '👤' : '👤'}</Text>
-  </View>
+  <Ionicons name={focused ? 'person' : 'person-outline'} size={22} color={COLORS.secondary} />
 );
 
 const MainTabNavigator = () => {
@@ -51,6 +42,7 @@ const MainTabNavigator = () => {
         tabBarLabelStyle: {
           fontSize: FONT_SIZE.xs,
           fontWeight: '700',
+          fontFamily: FONTS.bold,
           textTransform: 'uppercase',
         },
       }}
@@ -64,19 +56,19 @@ const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
+        name="Orders"
+        component={ClientHistoryScreen}
+        options={{
+          tabBarLabel: 'Pedidos',
+          tabBarIcon: OrdersIcon,
+        }}
+      />
+      <Tab.Screen
         name="Events"
         component={EventsScreen}
         options={{
           tabBarLabel: 'Eventos',
           tabBarIcon: EventsIcon,
-        }}
-      />
-      <Tab.Screen
-        name="Orders"
-        component={OrdersScreen}
-        options={{
-          tabBarLabel: 'Pedidos',
-          tabBarIcon: OrdersIcon,
         }}
       />
       <Tab.Screen
