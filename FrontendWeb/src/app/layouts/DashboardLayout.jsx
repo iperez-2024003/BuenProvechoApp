@@ -138,7 +138,8 @@ export const DashboardLayout = () => {
         )}
 
         {/* Zona de Contenido */}
-        <main className={`flex-1 relative z-10 w-full max-w-full ${isClient ? 'overflow-x-hidden w-full' : 'overflow-x-hidden md:overflow-y-auto p-3 sm:p-4 md:p-8 lg:p-12 scrollbar-hide'}`}>
+        <main className={`flex-1 relative z-10 w-full max-w-full ${isClient ? 'overflow-y-auto overflow-x-hidden' : 'overflow-x-hidden md:overflow-y-auto p-3 sm:p-4 md:p-8 lg:p-12 scrollbar-hide'}`}
+>          style={isClient ? { WebkitOverflowScrolling: 'touch' } : undefined}>
           {/* Background Accents */}
           <div className="hidden md:block fixed top-24 right-0 w-[500px] h-[500px] bg-primary-300/10 blur-[120px] rounded-full pointer-events-none -z-10" />
           <div className="hidden md:block fixed bottom-0 left-0 w-[400px] h-[400px] bg-primary-400/5 blur-[120px] rounded-full pointer-events-none -z-10" />
@@ -147,7 +148,7 @@ export const DashboardLayout = () => {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className={isClient ? 'w-full mx-auto max-w-[1600px] min-h-screen px-4 md:px-8 lg:px-12 pb-20' : 'w-full min-w-0'}
+            className={isClient ? 'w-full mx-auto max-w-[1600px] px-4 md:px-8 lg:px-12 pb-20' : 'w-full min-w-0'}
           >
             <Outlet />
           </motion.div>

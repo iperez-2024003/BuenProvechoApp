@@ -102,7 +102,7 @@ const FALLBACK_IMAGES = [
       <div className="absolute inset-x-0 top-0 h-[420px] border-b-2 border-[#1c1712] opacity-5 pointer-events-none" />
 
 
-      <div className="relative z-10 pt-16 md:pt-24 lg:pt-32 pb-16 md:pb-20 px-4 md:px-6 lg:px-0">
+      <div className="relative z-10 pt-12 md:pt-24 lg:pt-32 pb-12 md:pb-20 px-4 md:px-6 lg:px-0">
         <main className="flex min-w-0 flex-col gap-6 md:gap-10 max-w-7xl mx-auto">
         <motion.section
           variants={fadeUpSection}
@@ -111,7 +111,7 @@ const FALLBACK_IMAGES = [
           viewport={{ once: true, amount: 0.25 }}
           className="grid gap-6 md:gap-8 grid-cols-1 lg:grid-cols-[1.4fr_0.9fr]"
         >
-          <div className="relative overflow-hidden rounded-xl border-2 border-[#1c1712] bg-white p-6 md:p-8 lg:p-12 shadow-[8px_8px_0px_#1c1712]">
+          <div className="relative overflow-hidden rounded-xl border-2 border-[#1c1712] bg-white p-5 md:p-8 lg:p-12 shadow-[8px_8px_0px_#1c1712]">
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#b98c52]/10 rounded-bl-full -z-0" />
             <div className="relative z-10 grid grid-cols-1 items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="max-w-3xl">
@@ -237,7 +237,7 @@ const FALLBACK_IMAGES = [
           viewport={{ once: true, amount: 0.2 }}
           className="rounded-xl border-2 border-[#1c1712] bg-[#fffaf3] overflow-hidden shadow-[8px_8px_0px_#1c1712]"
         >
-          <div className="flex items-center justify-between gap-4 border-b-2 border-[#1c1712] px-6 pb-6 pt-8 md:px-10">
+          <div className="flex items-center justify-between gap-4 border-b-2 border-[#1c1712] px-4 pb-4 pt-6 md:px-10">
             <div>
               <p className="mb-2 text-[10px] font-black uppercase tracking-[0.4em] text-[#b98c52]">Sedes Destacadas</p>
               <h2 className="text-3xl font-black tracking-tighter text-[#1c1712] uppercase">Selección de hoy</h2>
@@ -287,7 +287,7 @@ const FALLBACK_IMAGES = [
           className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-[1.15fr_0.85fr]"
         >
           <div className="relative overflow-hidden rounded-xl border-2 border-[#1c1712] bg-white shadow-[8px_8px_0px_#1c1712]">
-            <div className="relative z-10 flex flex-col justify-between gap-8 p-8 md:p-12">
+              <div className="relative z-10 flex flex-col justify-between gap-6 p-6 md:p-12">
               <div>
                 <p className="mb-4 text-[10px] font-black uppercase tracking-[0.4em] text-[#b98c52] bg-[#fffaf3] w-fit px-3 py-1 border-2 border-[#1c1712] shadow-[2px_2px_0px_#1c1712]">Sede Recomendada</p>
                 <h3 className="text-4xl font-black uppercase leading-[1] tracking-tighter text-[#1c1712] md:text-6xl">
@@ -375,8 +375,8 @@ const FALLBACK_IMAGES = [
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.2 }}
-              className="sticky top-0 z-50 flex items-center gap-4 overflow-x-auto px-4 py-6 scroll-mt-28 scrollbar-hide md:px-0 bg-[#fffaf3] border-b-2 border-[#1c1712] shadow-[0_8px_0px_#1c1712]"
-
+              className="sticky top-0 z-50 flex items-center gap-2 md:gap-4 overflow-x-auto px-4 py-4 scroll-mt-28 scrollbar-hide md:px-0 bg-[#fffaf3] border-b-2 border-[#1c1712] shadow-[0_8px_0px_#1c1712] flex-nowrap"
+ 
               id="restaurants"
             >
               {['Todos', ...categories].map((category) => (
@@ -384,7 +384,7 @@ const FALLBACK_IMAGES = [
                 key={category}
                 type="button"
                 onClick={() => setActiveTab(category)}
-                className={`rounded border-2 border-[#1c1712] px-8 py-4 text-[10px] font-black uppercase tracking-widest transition-all duration-300 transform active:translate-y-1 ${
+                className={`shrink-0 rounded border-2 border-[#1c1712] px-5 md:px-8 py-3 md:py-4 text-[10px] font-black uppercase tracking-widest transition-all duration-300 transform active:translate-y-1 min-h-[44px] ${
                   activeTab === category
                     ? 'bg-[#1c1712] text-[#fffaf3] shadow-[4px_4px_0px_#b98c52]'
                     : 'bg-white text-[#1c1712] hover:-translate-y-1 hover:shadow-[4px_4px_0px_#1c1712] active:shadow-none'
@@ -415,7 +415,7 @@ const FALLBACK_IMAGES = [
                 <p className="mt-2 text-xs font-medium text-zinc-500">Explora otras delicias o vuelve más tarde.</p>
               </div>
             ) : (
-              <motion.div variants={staggerList} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.12 }} className="mt-12 grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3 md:gap-12">
+              <motion.div variants={staggerList} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.12 }} className="mt-6 md:mt-12 grid grid-cols-1 gap-6 md:gap-10 lg:gap-12 md:grid-cols-2 lg:grid-cols-3">
                 <AnimatePresence mode="popLayout">
                   {filteredRestaurants.map((restaurant, index) => (
                     <motion.button
@@ -429,7 +429,7 @@ const FALLBACK_IMAGES = [
                       onClick={() => navigate(`/menu/${restaurant.id}`)}
                       className="group relative w-full overflow-hidden rounded-xl border-2 border-[#1c1712] bg-white text-left shadow-[8px_8px_0px_#1c1712] transition-all hover:-translate-y-1 hover:shadow-[12px_12px_0px_#b98c52]"
                     >
-                      <div className="relative h-56 overflow-hidden md:h-64 border-b-2 border-[#1c1712]">
+                      <div className="relative h-48 md:h-64 overflow-hidden border-b-2 border-[#1c1712]">
                         <img
                           src={restaurant.cover_image_url || restaurant.logo_url || restaurant.logoUrl || FALLBACK_IMAGES[index % FALLBACK_IMAGES.length]}
                           onError={(e) => {
@@ -445,7 +445,7 @@ const FALLBACK_IMAGES = [
                         </div>
                       </div>
 
-                      <div className="p-6 md:p-8">
+                      <div className="p-5 md:p-8">
                         <div className="mb-4 flex items-start justify-between gap-4">
                           <div>
                             <p className="mb-2 text-[10px] font-black uppercase tracking-[0.4em] text-[#b98c52]">Sede Premium</p>
@@ -463,7 +463,7 @@ const FALLBACK_IMAGES = [
                             <Star className="h-4 w-4 text-[#b98c52] fill-[#b98c52]" />
                             <span className="text-lg font-black text-[#1c1712]">{restaurant.rating || '4.5'}</span>
                           </div>
-                          <span className="inline-flex items-center justify-center gap-2 rounded border-2 border-[#1c1712] bg-[#1c1712] px-6 py-3 text-[10px] font-black uppercase tracking-widest text-[#fffaf3] transition-all group-hover:bg-[#b98c52] group-hover:border-[#b98c52]">
+                          <span className="inline-flex items-center justify-center gap-2 rounded border-2 border-[#1c1712] bg-[#1c1712] px-5 py-3 text-[10px] font-black uppercase tracking-widest text-[#fffaf3] transition-all group-hover:bg-[#b98c52] group-hover:border-[#b98c52] min-h-[44px]">
                             Ver Menú <ArrowRight className="h-4 w-4" />
                           </span>
                         </div>
