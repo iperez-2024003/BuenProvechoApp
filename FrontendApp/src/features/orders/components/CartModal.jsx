@@ -86,6 +86,7 @@ export const CartModal = ({ visible, onClose, restaurantId }) => {
         delivery_address: orderType === 'delivery' ? deliveryAddress : '',
         delivery_fee: orderType === 'delivery' ? DELIVERY_FEE : 0,
         notes: notes.trim(),
+        discount: couponDiscount,
         items: cart.map((item) => ({
           menu_item_id: item.menuItemId,
           quantity: item.quantity,
