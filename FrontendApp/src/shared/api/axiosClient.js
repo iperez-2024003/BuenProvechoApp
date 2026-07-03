@@ -86,6 +86,16 @@ export const orderService = {
   getByUser: (userId) => axiosClient.get(`${API_CONFIG.ORDER_URL}`, { params: { user_id: userId } }),
 };
 
+export const reservationService = {
+  create: (data) => axiosClient.post(`${API_CONFIG.ORDER_SERVICE_URL}/reservations`, data),
+  checkAvailability: (params) => axiosClient.get(`${API_CONFIG.ORDER_SERVICE_URL}/reservations/check-availability`, { params }),
+  getByUser: (userId) => axiosClient.get(`${API_CONFIG.ORDER_SERVICE_URL}/reservations`, { params: { user_id: userId } }),
+};
+
+export const eventService = {
+  getAll: (params = {}) => axiosClient.get(`${API_CONFIG.REPORT_URL.replace('/stats', '')}/events`, { params }),
+  participate: (eventId, userId) => axiosClient.post(`${API_CONFIG.REPORT_URL.replace('/stats', '')}/events/${eventId}/participants`, { userId }),
+};
 
 
 export default axiosClient;
