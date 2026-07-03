@@ -15,6 +15,7 @@ import { restaurantService } from '../../../shared/api/axiosClient';
 import useAuthStore from '../../profile/store/useAuthStore';
 import useNotificationStore from '../../../shared/stores/useNotificationStore';
 import { UtensilsCrossed, MapPin, Star, Sparkles, Gem, Hand } from 'lucide-react-native';
+import { getFallbackRestaurant } from '../../../shared/constants/fallbackImages';
 
 const getVipLevelInfo = (pts = 0) => {
   if (pts >= 300) {
@@ -145,7 +146,7 @@ const ClientDashboardScreen = ({ navigation }) => {
     >
       <Image
         source={{
-          uri: item.cover_image_url || item.logo_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80',
+          uri: item.cover_image_url || item.logo_url || getFallbackRestaurant(item.id || item._id),
         }}
         style={styles.cardImage}
         resizeMode="cover"
@@ -232,7 +233,7 @@ const ClientDashboardScreen = ({ navigation }) => {
               >
                 <Image
                   source={{
-                    uri: restaurant.cover_image_url || restaurant.logo_url || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80',
+                    uri: restaurant.cover_image_url || restaurant.logo_url || getFallbackRestaurant(restaurant.id || restaurant._id),
                   }}
                   style={styles.featuredImage}
                   resizeMode="cover"

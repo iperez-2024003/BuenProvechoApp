@@ -14,6 +14,7 @@ import {
 import { COLORS, SPACING, FONT_SIZE, SHADOWS, FONTS } from '../../../shared/constants/theme';
 import { UtensilsCrossed, MapPin, Clock, Star, Search, ChevronRight } from 'lucide-react-native';
 import { restaurantService } from '../../../shared/api/axiosClient';
+import { getFallbackRestaurant } from '../../../shared/constants/fallbackImages';
 
 const { width } = Dimensions.get('window');
 
@@ -64,8 +65,8 @@ const HomeScreen = ({ navigation }) => {
     );
   }, [restaurants, search]);
 
-  const getImageUrl = (url) => {
-    if (!url) return 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800';
+  const getImageUrl = (url, id) => {
+    if (!url) return getFallbackRestaurant(id);
     return url;
   };
 
@@ -106,7 +107,7 @@ const HomeScreen = ({ navigation }) => {
     <View key={restaurant.id || index} style={styles.card}>
       <View style={styles.cardImageContainer}>
         <ImageBackground
-          source={{ uri: getImageUrl(restaurant.cover_image_url || restaurant.logo_url) }}
+          source={{ uri: getImageUrl(restaurant.cover_image_url || restaurant.logo_url, restaurant.id || restaurant._id) }}
           style={styles.cardImage}
           resizeMode="cover"
         >

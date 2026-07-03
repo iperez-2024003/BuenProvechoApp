@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { cancelEvent, createEvent, deleteEvent, getEvents, updateEvent } from '../../../shared/api/events';
 import { showError, showSuccess } from '../../../shared/utils/toast';
 import { translateEventType, translateStatus } from '../../../shared/utils/i18n';
+import { getFallbackEvent } from '../../../shared/utils/getFallbackImage';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Calendar,
@@ -214,7 +215,7 @@ const AdminEventsPage = () => {
                 >
                   <div className="h-52 relative overflow-hidden shrink-0">
                     <img
-                      src={event.imageUrl || event.image_url || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop'}
+                      src={event.imageUrl || event.image_url || getFallbackEvent(event.id)}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       alt={event.name}
                     />

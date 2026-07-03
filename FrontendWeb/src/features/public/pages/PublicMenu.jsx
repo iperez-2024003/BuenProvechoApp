@@ -13,6 +13,7 @@ import ScrollStack, { ScrollStackItem } from '../../../shared/components/ui/Scro
 import { MenuFlipCard } from '../../../shared/components/ui/MenuFlipCard';
 import { Input } from '../../../shared/components/ui/Input';
 import { Button } from '../../../shared/components/ui/Button';
+import { getFallbackRestaurant, getFallbackMenuItem } from '../../../shared/utils/getFallbackImage';
 import {
   ShoppingBag,
   Users,
@@ -418,7 +419,7 @@ const PublicMenu = () => {
           initial={{ scale: 1.2 }}
           animate={{ scale: 1 }}
           transition={{ duration: 2.5, ease: [0.23, 1, 0.32, 1] }}
-          src={restaurant.cover_image_url || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80'}
+          src={restaurant.cover_image_url || getFallbackRestaurant(restaurant.id || restaurant._id)}
           className="w-full h-full object-cover"
           alt="Banner"
         />
@@ -682,7 +683,7 @@ const PublicMenu = () => {
               price={`Q${item.price || item.average_price || 0}`}
               time={item.preparation_time || '20-30 min'}
               servings={item.portion_size || '1-2 pax'}
-              image={item.image_url || item.image || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80'}
+              image={item.image_url || item.image || getFallbackMenuItem(item.id)}
             />
           ))}
         </div>

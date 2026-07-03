@@ -20,6 +20,7 @@ import useCartStore from '../../orders/store/useCartStore';
 import useNotificationStore from '../../../shared/stores/useNotificationStore';
 import { CartModal } from '../../orders/components/CartModal';
 import ReservationModal from '../../reservations/components/ReservationModal';
+import { getFallbackRestaurant, getFallbackEvent } from '../../../shared/constants/fallbackImages';
 
 const RestaurantMenuScreen = ({ route }) => {
   const { id } = route.params;
@@ -227,7 +228,7 @@ const RestaurantMenuScreen = ({ route }) => {
         <View style={styles.heroSection}>
           <Image
             source={{
-              uri: restaurant.cover_image_url || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80',
+              uri: restaurant.cover_image_url || getFallbackRestaurant(restaurant.id || restaurant._id),
             }}
             style={styles.heroImage}
             resizeMode="cover"
@@ -288,7 +289,7 @@ const RestaurantMenuScreen = ({ route }) => {
                         ? event.image_url.startsWith('data:')
                           ? event.image_url
                           : `data:image/png;base64,${event.image_url}`
-                        : 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80',
+                        : getFallbackEvent(event.id),
                     }}
                     style={styles.eventImage}
                     resizeMode="cover"

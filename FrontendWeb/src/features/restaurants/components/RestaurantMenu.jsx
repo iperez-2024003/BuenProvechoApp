@@ -8,6 +8,7 @@ import { CategoryModal } from './CategoryModal';
 import { showSuccess, showError } from '../../../shared/utils/toast';
 import { getImageUrl } from '../../../shared/utils/getImageUrl';
 import { MenuFlipCard } from '../../../shared/components/ui/MenuFlipCard';
+import { getFallbackMenuItem } from '../../../shared/utils/getFallbackImage';
 import { ActionButton } from '../../../shared/components/ui/ActionButton';
 import { 
   PlusCircle, 
@@ -173,7 +174,7 @@ export const RestaurantMenu = () => {
                     price={`Q${item.price}`}
                     time="15-20 Min"
                     servings="1 Persona"
-                    image={getImageUrl(item.image_url) || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c'}
+                    image={getImageUrl(item.image_url) || getFallbackMenuItem(item.id)}
                   />
                   
                   {canManage && (

@@ -5,6 +5,7 @@ import { useAuthStore } from '../../auth/store/useAuthStore';
 import { RestaurantModal } from './RestaurantModal';
 import { showSuccess, showError } from '../../../shared/utils/toast';
 import { getImageUrl } from '../../../shared/utils/getImageUrl';
+import { getFallbackRestaurant } from '../../../shared/utils/getFallbackImage';
 import { 
   PlusCircle, Search, MapPin, Phone, Clock, 
   Utensils, Trash2, Edit3, CheckCircle2, Loader2, Sparkles, ChevronRight 
@@ -110,7 +111,7 @@ const RestaurantsPage = () => {
                   <Card className="overflow-hidden p-0 group border-primary-100 hover:border-primary-400">
                     <div className="h-40 relative">
                       <img 
-                        src={getImageUrl(r.cover_image_url) || getImageUrl(r.logo_url) || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80'} 
+                        src={getImageUrl(r.cover_image_url) || getImageUrl(r.logo_url) || getFallbackRestaurant(r.id || r._id)} 
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         alt={r.name}
                       />

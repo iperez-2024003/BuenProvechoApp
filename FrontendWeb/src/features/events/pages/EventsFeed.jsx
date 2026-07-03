@@ -4,6 +4,7 @@ import { getEvents, registerToEvent } from '../../../shared/api/events';
 import { useAuthStore } from '../../auth/store/useAuthStore';
 import { showError, showSuccess } from '../../../shared/utils/toast';
 import { translateEventType } from '../../../shared/utils/i18n';
+import { getFallbackEvent } from '../../../shared/utils/getFallbackImage';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calendar, 
@@ -134,7 +135,7 @@ const EventsFeed = () => {
               >
                 <div className="h-48 md:h-60 relative overflow-hidden border-b-2 border-[#1c1712]">
                   <img
-                    src={event.image_url || 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80'}
+                    src={event.image_url || getFallbackEvent(event.id)}
                     className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-1000"
                     alt={event.name}
                   />

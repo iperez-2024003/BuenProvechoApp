@@ -14,14 +14,13 @@ import { COLORS, SPACING, FONT_SIZE, FONTS, SHADOWS } from '../../../shared/cons
 import { Tag, Ticket, Sparkles, Check, Hourglass, Calendar, PartyPopper, Star } from 'lucide-react-native';
 import useEventsStore from '../store/useEventsStore';
 import useNotificationStore from '../../../shared/stores/useNotificationStore';
+import { getFallbackEvent } from '../../../shared/constants/fallbackImages';
 
 const EVENT_TYPE_LABELS = {
   promotion: { label: 'Promo', icon: 'tag', bg: '#fef08a', color: '#854d0e' },
   event: { label: 'Social', icon: 'ticket', bg: '#bbf7d0', color: '#166534' },
   special: { label: 'Especial', icon: 'sparkles', bg: '#fbcfe8', color: '#9d174d' },
 };
-
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=600';
 
 const EventsScreen = ({ navigation }) => {
   const { events, loading, error, fetchAllEvents, participateInEvent } = useEventsStore();
@@ -124,7 +123,7 @@ const EventsScreen = ({ navigation }) => {
         {/* Image */}
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: item.image_url || FALLBACK_IMAGE }}
+            source={{ uri: item.image_url || getFallbackEvent(item.id || item._id) }}
             style={styles.eventImage}
             resizeMode="cover"
           />
