@@ -4,9 +4,8 @@ import mongoose from 'mongoose';
 
 export const dbConnection = async () => {
   try {
-    mongoose.connection.on('error', () => {
-      console.log('MongoDB | No se pudo conectar a MongoDB');
-      mongoose.disconnect();
+    mongoose.connection.on('error', (err) => {
+      console.log('MongoDB | Error:', err.message);
     });
 
     mongoose.connection.on('connecting', () => {
@@ -34,8 +33,8 @@ export const dbConnection = async () => {
       maxPoolSize: 10,
     });
   } catch (error) {
-    console.log(`Error al conectar la DB: ${error}`);
-    process.exit(1);
+    console.log('MongoDB | Error al conectar:', error.message);
+    console.log('MongoDB | El servicio continuará sin conexión a MongoDB');
   }
 };
 
