@@ -28,7 +28,9 @@ export const dbConnection = async () => {
       console.log('MongoDB | Desconectando de MongoDB');
     });
 
-    await mongoose.connect(process.env.URI_MONGO, {
+    const uri = process.env.URI_MONGO || 'no definido';
+    console.log('MongoDB | URI (ocultando password):', uri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@'));
+    await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 5000,
       maxPoolSize: 10,
     });
