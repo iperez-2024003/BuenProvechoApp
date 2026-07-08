@@ -23,10 +23,10 @@ export const config = {
     fromName: process.env.EMAIL_FROM_NAME,
   },
 
-  // Resend (Transactional Email - HTTP API, no SMTP)
-  resend: {
-    apiKey: process.env.RESEND_API_KEY,
-    fromEmail: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+  // Brevo (Transactional Email - HTTP API, funciona en Render free)
+  email: {
+    apiKey: process.env.BREVO_API_KEY,
+    fromEmail: process.env.EMAIL_FROM || 'gestionrestaurante3@gmail.com',
     fromName: process.env.EMAIL_FROM_NAME || 'Buen Provecho',
   },
 
