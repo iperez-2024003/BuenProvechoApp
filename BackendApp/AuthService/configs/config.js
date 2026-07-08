@@ -16,11 +16,18 @@ export const config = {
   smtp: {
     host: process.env.SMTP_HOST,
     port: parseInt(process.env.SMTP_PORT, 10) || 587,
-    enableSsl: process.env.SMTP_SECURE === 'true', // CORREGIDO: Cambié SMTP_ENABLE_SSL por SMTP_SECURE
+    enableSsl: process.env.SMTP_SECURE === 'true',
     username: process.env.SMTP_USERNAME,
     password: process.env.SMTP_PASSWORD,
     fromEmail: process.env.EMAIL_FROM,
     fromName: process.env.EMAIL_FROM_NAME,
+  },
+
+  // Resend (Transactional Email - HTTP API, no SMTP)
+  resend: {
+    apiKey: process.env.RESEND_API_KEY,
+    fromEmail: process.env.EMAIL_FROM || 'onboarding@resend.dev',
+    fromName: process.env.EMAIL_FROM_NAME || 'Buen Provecho',
   },
 
   // File Upload Configuration (aligned with .NET FileValidator)

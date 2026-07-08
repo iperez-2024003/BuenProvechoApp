@@ -306,7 +306,7 @@ const ClientDashboardScreen = ({ navigation }) => {
       <FlatList
         data={filteredRestaurants}
         renderItem={renderRestaurantCard}
-        keyExtractor={(item) => (item.id || item._id).toString()}
+        keyExtractor={(item) => String(item.id || item._id || Math.random())}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={

@@ -2,9 +2,10 @@ import { useEffect } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 
 const RestaurantDetailScreen = ({ navigation, route }) => {
-  const { id } = route.params;
+  const id = route?.params?.id;
 
   useEffect(() => {
+    if (!id) return;
     navigation.replace('RestaurantMenu', { id });
   }, [navigation, id]);
 
