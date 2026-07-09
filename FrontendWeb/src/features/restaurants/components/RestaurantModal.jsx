@@ -68,27 +68,40 @@ export const RestaurantModal = ({ isOpen, onClose, restaurant = null }) => {
     setSelectedDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
   };
 
+  const SKIP_FIELDS = new Set([
+    'logo', 'id', '_id', 'createdAt', 'updatedAt', 'admin_id',
+    'operating_days', 'operatingDays',
+    '__v', 'rating', 'total_reviews', 'is_verified', 'verification_date',
+    'logo_url', 'cover_image_url', 'parent_restaurant_id',
+  ]);
+
   const onSubmit = async (data) => {
-    if (!currentAdminId) {
-      return;
-    }
+    if (!currentAdminId) return;
 
     const formData = new FormData();
+
+    if (data.logo?.[0]) {
+      formData.append('logo', data.logo[0]);
+    }
+
     Object.keys(data).forEach(key => {
-      if (key === 'logo' && data[key]?.[0]) {
-        formData.append('logo', data[key][0]);
-        return;
-      }
+      if (SKIP_FIELDS.has(key)) return;
+
+      const val = data[key];
+      if (val === undefined || val === null) return;
 
       if (key === 'opening_time' || key === 'closing_time') {
-        const normalizedTime = data[key] && data[key].length === 5 ? `${data[key]}:00` : data[key];
-        if (normalizedTime) formData.append(key, normalizedTime);
+        const t = val && val.length === 5 ? `${val}:00` : val;
+        if (t) formData.append(key, t);
         return;
       }
 
-      if (key !== 'logo' && data[key] !== undefined && data[key] !== null) {
-        formData.append(key, data[key]);
+      if (Array.isArray(val)) {
+        formData.append(key, JSON.stringify(val));
+        return;
       }
+
+      formData.append(key, val);
     });
 
     if (!formData.has('admin_id')) {
