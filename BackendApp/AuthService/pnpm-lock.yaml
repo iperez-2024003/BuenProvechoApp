@@ -63,6 +63,9 @@ importers:
         specifier: ^13.0.0
         version: 13.0.2
     devDependencies:
+      debug:
+        specifier: ^4.4.3
+        version: 4.4.3(supports-color@5.5.0)
       nodemon:
         specifier: ^3.1.10
         version: 3.1.14
